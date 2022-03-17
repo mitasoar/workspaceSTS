@@ -2,7 +2,35 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!-- 모든 SQL문을 mapper태그 안에 작성 -->
 <mapper namespace="memberMapper">
+
+	<resultMap type="com.kh.shop.vo.MemberVO" id="member">
+		<id column="MEM_ID" property="memId"/>
+		<result column="MEM_PW" property="memPw"/>
+		<result column="MEM_NAME" property="memName"/>
+		<result column="MEM_PHONE" property="memPhone"/>
+		<result column="MEM_EMAIL" property="memEmail"/>
+		<result column="MEM_ADDRESS" property="memAddress"/>
+		<result column="IS_ADMIN" property="isAdmin"/>
+		<result column="JOIN_DATE" property="joinDate"/>
+	</resultMap>
 	
+	<insert id="insertMember">
+		INSERT INTO SHOP_MEMBER (
+			MEM_ID
+			, MEM_PW
+			, MEM_NAME
+			, MEM_PHONE
+			, MEM_EMAIL
+			, MEM_ADDRESS
+		) VALUES (
+			#{memId}
+			, #{memPw}
+			, #{memName}
+			, #{memPhone}
+			, #{memEmail}
+			, #{memAddress}
+		)
+	</insert>
 </mapper>
 
 
