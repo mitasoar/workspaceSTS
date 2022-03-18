@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<!-- 모든 SQL문을 mapper태그 안에 작성 -->
 <mapper namespace="memberMapper">
 
 	<resultMap type="com.kh.shop.vo.MemberVO" id="member">
@@ -13,6 +12,23 @@
 		<result column="IS_ADMIN" property="isAdmin"/>
 		<result column="JOIN_DATE" property="joinDate"/>
 	</resultMap>
+	
+	<select id="loginMember" resultMap="member">
+		SELECT MEM_ID
+			, MEM_NAME
+			, MEM_PHONE
+			, MEM_EMAIL
+			, MEM_ADDRESS
+			, IS_ADMIN
+		FROM SHOP_MEMBER
+		WHERE MEM_ID = #{memId} AND MEM_PW = #{memPw}
+	</select>
+	
+	<select id="idCheck" resultType="string">
+		SELECT MEM_ID
+		FROM SHOP_MEMBER
+		WHERE MEM_ID = #{memId}
+	</select>
 	
 	<insert id="insertMember">
 		INSERT INTO SHOP_MEMBER (
@@ -31,6 +47,17 @@
 			, #{memAddress}
 		)
 	</insert>
+	
+	<update id="updateMember">
+		UPDATE SHOP_MEMBER
+		SET MEM_PW = #{memPw}
+			, MEM_NAME = #{memName}
+			, MEM_PHONE = #{memPhone}
+			, MEM_Email = #{memEmail}
+			, MEM_ADDRESS = #{memAddress}
+		WHERE MEM_ID = #{memId}
+	</update>
+	
 </mapper>
 
 

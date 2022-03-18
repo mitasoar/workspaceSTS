@@ -16,4 +16,24 @@ public class MemberServiceImpl implements MemberService {
 		sqlSession.insert("memberMapper.insertMember", member);
 	}
 
+	@Override
+	public MemberVO loginMember(MemberVO member) {
+		return sqlSession.selectOne("memberMapper.loginMember", member);
+	}
+
+	@Override
+	public boolean idCheck(String id) {
+		String idCheck = sqlSession.selectOne("idCheck", id);
+		if (idCheck == null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public void updateMember(MemberVO member) {
+		sqlSession.update("memberMapper.updateMember", member);
+	}
+
 }

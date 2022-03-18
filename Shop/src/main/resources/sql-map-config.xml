@@ -9,6 +9,7 @@
 
 	<mappers>
 		<mapper resource="/mapper/member-Mapper.xml"/>
+		<mapper resource="/mapper/item-Mapper.xml"/>
 	</mappers>
 </configuration>
 

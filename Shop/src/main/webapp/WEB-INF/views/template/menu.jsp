@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,9 +11,17 @@
 <body>
 	<div class="row">
 		<div class="col text-end">
-			<!-- Button trigger modal -->
-			<button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button> 
-			<button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#joinModal">Join</button> 
+			<c:choose>
+				<c:when test="${empty login}">
+					<button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#loginModal">로그인</button> 
+					<button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#joinModal">회원가입</button> 
+				</c:when>
+				<c:otherwise>
+					<span class="loginSpan">${login.memName}님 반갑습니다 ^_^</span>
+					<button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#editModal">회원정보</button> 
+					<button type="button" class="btn btn-light" onclick="location.href='/member/logout'">로그아웃</button> 
+				</c:otherwise>
+			</c:choose>
 		</div>
 	</div>
 	<div class="row">
@@ -23,17 +33,20 @@
 		<div class="col">
 			<nav class="navbar navbar-expand-lg navbar-light bg-light">
 				<div class="container-fluid">
-					<a class="navbar-brand" href="#">Navbar</a>
+					<!-- <a class="navbar-brand" href="#">Navbar</a>
 					<button class="navbar-toggler" type="button"
 						data-bs-toggle="collapse" data-bs-target="#navbarNav"
 						aria-controls="navbarNav" aria-expanded="false"
 						aria-label="Toggle navigation">
 						<span class="navbar-toggler-icon"></span>
-					</button>
+					</button> -->
 					<div class="collapse navbar-collapse" id="navbarNav">
-						<ul class="navbar-nav">
-							<li class="nav-item">
+						<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+							<!-- <li class="nav-item">
 								<a class="nav-link active" aria-current="page" href="#">Home</a>
+							</li> -->
+							<li class="nav-item">
+								<a class="nav-link" href="#">전체상품</a>
 							</li>
 							<li class="nav-item">
 								<a class="nav-link" href="#">IT/인터넷</a>
@@ -47,10 +60,15 @@
 							<li class="nav-item">
 								<a class="nav-link" href="#">에세이</a>
 							</li>
-							<li class="nav-item">
+							<!-- <li class="nav-item">
 								<a class="nav-link disabled">Disabled</a>
-							</li>
+							</li> -->
 						</ul>
+						<c:if test="${login.isAdmin eq 'Y'}">
+							<div class="navbar-nav nav-item">
+								<a class="nav-link" href="/admin/regItem">관리자메뉴</a>
+							</div>
+						</c:if>
 					</div>
 				</div>
 			</nav>
@@ -66,19 +84,17 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form action="#" method="post">
       	<div class="mb-3">
-      		<input class="form-control" type="text" name="memId" placeholder="아이디를 입력해주세요" aria-label="default input example">
+      		<input class="form-control" type="text" name="memId" id="loginId" placeholder="아이디를 입력해주세요" aria-label="default input example" required>
       	</div>
        	<div class="mb-3">
-      		<input class="form-control" type="password" name="memPw" placeholder="비밀번호를 입력해주세요" aria-label="default input example">
+      		<input class="form-control" type="password" name="memPw" id="loginPw" placeholder="비밀번호를 입력해주세요" aria-label="default input example" required>
       	</div>
       	<div class="mb-3 text-end">
 	      	<button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#joinModal">회원가입</button> 
 	        <button type="button" class="btn btn-dark" data-bs-dismiss="modal">취소</button>
-	        <button type="submit" class="btn btn-dark">로그인</button>
+	        <button type="button" class="btn btn-dark" onclick="login();">로그인</button>
         </div>
-      	</form>
       </div>
     </div>
   </div>
@@ -94,9 +110,13 @@
       </div>
       <div class="modal-body">
         <form class="row g-3" action="/member/join" method="post">
-		  <div class="col-12">
+		  <div class="col-9">
 		    <label for="inputId" class="form-label">아이디</label>
 		    <input type="text" class="form-control" id="inputId" name="memId" maxlength="15" required>
+		  </div>
+		  <div class="col-3 d-grid">
+		    	<label for="" class="form-label">&nbsp;</label>
+		    	<button type="button" class="btn btn-dark" id="idCheckBtn" onclick="checkId();">중복체크</button>
 		  </div>
 		  <div class="col-12">
 		    <label for="inputPassword" class="form-label">비밀번호</label>
@@ -115,7 +135,7 @@
 		    <input type="email" class="form-control" id="inputEmail" name="memEmail" required>
 		  </div>
 		  <div class="col-md-4">
-		    <label for="inputCity" class="form-label">연락처</label>
+		    <label for="inputState" class="form-label">연락처</label>
 		     <select id="inputState" class="form-select" name="memPhone">
 		      <option value="010" selected>010</option>
 		      <option value="011">011</option>
@@ -131,7 +151,7 @@
 		  </div>
 		  <div class="col-8">
 		    <label for="inputAddress" class="form-label">주소</label>
-		    <input type="text" class="form-control" id="addr" onclick="execDaumPostcode();" placeholder="도로명주소" name="memAddress" readonly required>
+		    <input type="text" class="form-control bg-white" id="addr" onclick="execDaumPostcode();" placeholder="도로명주소" name="memAddress" readonly required>
 		  </div>
 		  <div class="col-4 d-grid">
 		  	<label for="" class="form-label">&nbsp;</label>
@@ -139,14 +159,6 @@
 		  </div>
 		  <div class="col-12">
 		    <input type="text" class="form-control" id="inputAddress" placeholder="상세주소" name="memAddress" required>
-		  </div>
-		  <div class="col-12">
-		    <div class="form-check">
-		      <input class="form-check-input" type="checkbox" id="gridCheck">
-		      <label class="form-check-label" for="gridCheck">
-		        Check me out
-		      </label>
-		    </div>
 		  </div>
 		  <div class="col-12 text-end">
 		  	<button type="button" class="btn btn-dark" data-bs-dismiss="modal">취소</button>
@@ -157,34 +169,83 @@
     </div>
   </div>
 </div>
+
+<!-- Edit Modal -->
+<div class="modal fade modalEvent" id="editModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">회원정보</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form class="row g-3" action="/member/edit" method="post">
+		  <div class="col-12">
+		    <label for="editId" class="form-label">아이디</label>
+		    <input type="text" class="form-control" id="editId" name="memId" value="${login.memId}" maxlength="15" readonly required>
+		  </div>
+		  <div class="col-12">
+		    <label for="editPassword" class="form-label">비밀번호</label>
+		    <input type="password" class="form-control" id="editPassword" name="memPw" maxlength="16" required>
+		  </div>
+		  <div class="col-12">
+		    <label for="inputPasswordCheck" class="form-label">비밀번호확인</label>
+		    <input type="password" class="form-control" id="editPasswordCheck" name="memPwCheck" maxlength="16" required>
+		  </div>
+		  <div class="col-md-4">
+		    <label for="editName" class="form-label">이름</label>
+		    <input type="text" class="form-control" id="editName" name="memName" value="${login.memName}" required>
+		  </div>
+		  <div class="col-md-8">
+		    <label for="editEmail" class="form-label">이메일</label>
+		    <input type="email" class="form-control" id="editEmail" name="memEmail" value="${login.memEmail}" required>
+		  </div>
+		  <div class="col-md-4">
+		    <label for="editState" class="form-label">연락처</label>
+		     <select id="editState" class="form-select" name="memPhone">
+		     <c:set var="phone" value="${login.memPhone}"></c:set>
+		      <c:choose>
+		      	<c:when test="${fn:substring(phone,0,3) eq 010}">
+		      		 <option value="010" selected>010</option>
+		     		 <option value="011">011</option>
+		      	</c:when>
+		      	<c:otherwise>
+		      	 	<option value="010">010</option>
+		     		<option value="011" selected>011</option>
+		      	</c:otherwise>
+		      </c:choose>
+		    </select>
+		  </div>
+		  <div class="col-md-4">
+		  <label for="" class="form-label">&nbsp;</label>
+		   <input type="text" class="form-control" name="memPhone" maxlength="4" value="${fn:substring(phone,4,8)}" required>
+		  </div>
+		  <div class="col-4 d-grid">
+		  <label for="" class="form-label">&nbsp;</label>
+		   <input type="text" class="form-control" name="memPhone" maxlength="4" value="${fn:substring(phone,9,13)}" required>
+		  </div>
+		  <div class="col-8">
+		  	<c:set var="addr" value="${login.memAddress}"></c:set>
+		    <label for="inputAddress" class="form-label">주소</label>
+		    <input type="text" class="form-control bg-white" id="addr" onclick="execDaumPostcode();" placeholder="도로명주소" name="memAddress" value="${fn:split(addr, '/')[0]}" readonly required>
+		  </div>
+		  <div class="col-4 d-grid">
+		  	<label for="" class="form-label">&nbsp;</label>
+		    <button type="button" class="btn btn-dark" onclick="execDaumPostcode();">우편번호</button>
+		  </div>
+		  <div class="col-12">
+		    <input type="text" class="form-control" id="inputAddress" placeholder="상세주소" name="memAddress" value="${fn:split(addr, '/')[1]}" required>
+		  </div>
+		  <div class="col-12 text-end">
+		  	<button type="button" class="btn btn-dark" data-bs-dismiss="modal">취소</button>
+		    <button type="submit" class="btn btn-dark">회원정보변경</button>
+		  </div>
+		</form>
+      </div>
+    </div>
+  </div>
+</div>
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-<script type="text/javascript">
-	// 모달 창 종료 시 데이터 리셋
-	const loginModalEl = document.getElementById('loginModal');
-	loginModalEl.addEventListener('hidden.bs.modal', function (event) {
-	  const tags = document.querySelectorAll('#loginModal input');
-	  for (let i = 0; i < tags.length; i++) {
-		  tags[i].value = '';
-	  }
-	})
-	
-	const joinModalEl = document.getElementById('joinModal');
-	joinModalEl.addEventListener('hidden.bs.modal', function (event) {
-		const tags = document.querySelectorAll('#joinModal input');
-		for (let i = 0; i < tags.length; i++) {
-			tags[i].value = '';
-		}	
-	})
-	
-	// 우편번호 검색 API
-	function execDaumPostcode() {
-        new daum.Postcode({
-            oncomplete: function(data) {
-                // 우편번호와 주소 정보를 해당 필드에 넣는다.
-                document.getElementById("addr").value = data.roadAddress;
-            }
-        }).open();
-    }
-</script>
+<script src="/resources/js/common/menu.js" type="text/javascript"></script>
 </body>
 </html>

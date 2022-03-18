@@ -41,5 +41,26 @@
 }
 
 body {
-	font-family: 'LeeSeoyun';
+	font-family: 'KyoboHandwriting2020A';
+}
+
+.container {
+	padding-top: 10px;
+}
+
+.loginSpan {
+	display: block;
+	float: left;
+}
+
+.mg-bt-20 {
+	margin-bottom: 20px;
+}
+
+.pd-15 {
+	padding: 15px;
+}
+
+.bd-rd-15 {
+	border-radius: 15px;
 }

@@ -25,14 +25,17 @@
 </head>
 <body>
 	<div class="container">
-		<div class="row">
+		<div class="row mg-bt-20">
 			<div class="col">
-				<tiles:insertAttribute name="menu" />
+				<tiles:insertAttribute name="menu"/>
 			</div>
 		</div>
 		<div class="row">
-			<div class="col">
-				<tiles:insertAttribute name="body" />
+			<div class="col-3">
+				<tiles:insertAttribute name="side"/>
+			</div>
+			<div class="col-9">
+				<tiles:insertAttribute name="body"/>
 			</div>
 		</div>
 	</div>

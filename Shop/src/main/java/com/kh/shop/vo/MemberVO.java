@@ -66,7 +66,7 @@ public class MemberVO {
 	}
 	
 	public void setMemAddress(String memAddress) {
-		this.memAddress = memAddress.replace(",", " ");
+		this.memAddress = memAddress.replace(",", " / ");
 	}
 
 	@Override
