@@ -8,7 +8,7 @@
 		<put-attribute name="body" value=""/>
 	</definition>
 	
-	<definition name="adminLayout" template="/WEB-INF/views/template/admin_template.jsp">
+	<definition name="adminLayout" template="/WEB-INF/views/template/template.jsp">
 		<put-attribute name="title" value="Shop"/>
 		<put-attribute name="menu" value="/WEB-INF/views/template/menu.jsp"/>
 		<put-attribute name="side" value="/WEB-INF/views/template/side.jsp"/>

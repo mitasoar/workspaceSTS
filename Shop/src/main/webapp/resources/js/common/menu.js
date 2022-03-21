@@ -25,11 +25,11 @@
         }).open();
     }
     
-	// 회원정보변경 버튼 비활성화
-	const editTarget = document.querySelector('#editModal button[type=submit]');
+	// 회원정보수정 버튼 비활성화
+	const editTarget = document.querySelector('#editBtn');
 	editTarget.disabled = true;
 	
-	// 회원정보변경 버튼 활성화
+	// 회원정보수정 버튼 활성화
 	// 비밀번호 체크
 	const editPw1 = document.getElementById('editPassword');
 	const editPw2 = document.getElementById('editPasswordCheck');
@@ -53,7 +53,24 @@
 			editTarget.disabled = true;
 		}
 	})
-	
+		
+	// 회원정보수정 ajax
+	function editMember() {
+		$.ajax({
+			url: "/member/edit",
+			type: "POST",
+			data: new FormData(document.querySelector('#editForm')),
+			processData: false,
+			contentType: false,
+			success: function() {
+				alert("회원정보가 정상적으로 수정되었습니다.");
+				location.href='/item/itemList';
+			},
+			error: function() {
+				alert("회원정보수정 실패.. 다시 확인해주세요.");
+			}
+		})
+	}
 	
 	// 회원가입 버튼 비활성화
 	const joinTarget = document.querySelector('#joinModal button[type=submit]');
@@ -153,8 +170,17 @@
 				if (data == 'ok') {
 					location.href='/item/itemList';
 				} else {
-					alert("로그인 실패.. 아이디와 비밀번호를 다시 확인해주세요");
+					alert("로그인 실패.. 아이디와 비밀번호를 다시 확인해주세요.");
 				}
 			},
 		})
 	}
+	
+	// 로그아웃
+	function logout() {
+		if (confirm('로그아웃 하시겠습니까?')) {
+			alert("로그아웃 되었습니다.");
+			location.href='/member/logout';
+		}
+	}
+	

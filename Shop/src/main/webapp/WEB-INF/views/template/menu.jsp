@@ -19,7 +19,7 @@
 				<c:otherwise>
 					<span class="loginSpan">${login.memName}님 반갑습니다 ^_^</span>
 					<button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#editModal">회원정보</button> 
-					<button type="button" class="btn btn-light" onclick="location.href='/member/logout'">로그아웃</button> 
+					<button type="button" class="btn btn-light" onclick="logout();">로그아웃</button> 
 				</c:otherwise>
 			</c:choose>
 		</div>
@@ -33,40 +33,20 @@
 		<div class="col">
 			<nav class="navbar navbar-expand-lg navbar-light bg-light">
 				<div class="container-fluid">
-					<!-- <a class="navbar-brand" href="#">Navbar</a>
-					<button class="navbar-toggler" type="button"
-						data-bs-toggle="collapse" data-bs-target="#navbarNav"
-						aria-controls="navbarNav" aria-expanded="false"
-						aria-label="Toggle navigation">
-						<span class="navbar-toggler-icon"></span>
-					</button> -->
 					<div class="collapse navbar-collapse" id="navbarNav">
 						<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-							<!-- <li class="nav-item">
-								<a class="nav-link active" aria-current="page" href="#">Home</a>
-							</li> -->
 							<li class="nav-item">
-								<a class="nav-link" href="#">전체상품</a>
+								<a class="nav-link <c:if test="${empty cateType}">active</c:if>" href="/item/itemList">전체상품</a>
 							</li>
-							<li class="nav-item">
-								<a class="nav-link" href="#">IT/인터넷</a>
-							</li>
-							<li class="nav-item">
-								<a class="nav-link" href="#">사회/과학</a>
-							</li>
-							<li class="nav-item">
-								<a class="nav-link" href="#">소설</a>
-							</li>
-							<li class="nav-item">
-								<a class="nav-link" href="#">에세이</a>
-							</li>
-							<!-- <li class="nav-item">
-								<a class="nav-link disabled">Disabled</a>
-							</li> -->
+							<c:forEach items="${categoryList}" var="category">
+								<li class="nav-item">
+									<a class="nav-link <c:if test="${cateType eq category.cateCode}">active</c:if>" href="/item/itemList?cateType=${category.cateCode}">${category.cateName}</a>
+								</li>
+							</c:forEach>
 						</ul>
 						<c:if test="${login.isAdmin eq 'Y'}">
 							<div class="navbar-nav nav-item">
-								<a class="nav-link" href="/admin/regItem">관리자메뉴</a>
+								<a class="nav-link <c:if test="${cateType eq 'admin'}">active</c:if>" href="/admin/regItem?cateType=admin">관리자메뉴</a>
 							</div>
 						</c:if>
 					</div>
@@ -179,7 +159,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form class="row g-3" action="/member/edit" method="post">
+        <form class="row g-3" action="/member/edit" method="post" id="editForm">
 		  <div class="col-12">
 		    <label for="editId" class="form-label">아이디</label>
 		    <input type="text" class="form-control" id="editId" name="memId" value="${login.memId}" maxlength="15" readonly required>
@@ -238,7 +218,7 @@
 		  </div>
 		  <div class="col-12 text-end">
 		  	<button type="button" class="btn btn-dark" data-bs-dismiss="modal">취소</button>
-		    <button type="submit" class="btn btn-dark">회원정보변경</button>
+		    <button type="button" class="btn btn-dark" onclick="editMember();" id="editBtn">회원정보수정</button>
 		  </div>
 		</form>
       </div>

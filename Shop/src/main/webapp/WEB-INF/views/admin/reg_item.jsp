@@ -8,14 +8,14 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<div class="row justify-content-center">
+	<div class="row text-center">
 		<div class="col-7">
 			<h4>책 등록</h4>
 		</div>
 	</div>
-	<div class="row">
+	<div class="row mg-left-40">
 		<div class="col-6 bg-light pd-15 bd-rd-15">
-			<form class="row g-3" action="/item/insertItem" method="post">
+			<form class="row g-3" id="itemForm" action="/admin/insertItem" method="post">
 				<div class="col-12">
 					<label for="categorySelector" class="form-label">카테고리</label>
 					<select class="form-select" id="categorySeletor" name="cateCode">
@@ -30,17 +30,18 @@
 				</div>
 				<div class="col-12">
 					<label for="bookPrice" class="form-label">도서가격</label>
-					<input type="text" class="form-control" id="bookPrice" name="itemPrice" required>	
+					<input type="number" class="form-control" id="bookPrice" name="itemPrice" min="1" required>	
 				</div>
 				<div class="col-12">
 					<label for="bookIntro" class="form-label">도서소개</label>
 					<textarea rows="3" class="form-control" id="bookIntro" name="itemDetail"></textarea>
 				</div>
 				<div class="col-12 d-grid gap-2">
-                  <button class="btn btn-primary">도서등록</button>
+                  <button type="button" class="btn btn-secondary" onclick="addItem();">도서등록</button>
                </div>
 			</form>
 		</div>
 	</div>
+<script src="/resources/js/admin/reg_item.js" type="text/javascript"></script>
 </body>
 </html>
