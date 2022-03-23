@@ -37,6 +37,32 @@
 			, CATE_NAME
 		FROM ITEM_CATEGORY
 	</select>
+	
+	<resultMap type="com.kh.shop.vo.ImageVO" id="image">
+		<id column="IMG_CODE" property="imgCode"/>
+		<result column="ORIGIN_IMG_NAME" property="originImgName"/>
+		<result column="ATTACHED_IMG_NAME" property="attachedImgName"/>
+		<result column="IS_MAIN" property="isMain"/>
+		<result column="ITEM_CODE" property="itemCode"/>
+	</resultMap>
+	
+	<insert id="insertImages">
+		INSERT INTO ITEM_IMAGE (
+			IMG_CODE
+			, ORIGIN_IMG_NAME
+			, ATTACHED_IMG_NAME
+			, IS_MAIN
+			, ITEM_CODE
+		)
+		<foreach collection="imgList" item="img" index="i" separator="UNION ALL">
+		SELECT (SELECT 'IMG_' || LPAD(NVL(TO_NUMBER(MAX(SUBSTR(IMG_CODE, 6, 3))), 0) + #{i} + 1, 3, 0) FROM ITEM_IMAGE)
+			, #{img.originImgName}
+			, #{img.attachedImgName}
+			, #{img.isMain}
+			, (SELECT MAX(ITEM_CODE) FROM SHOP_ITEM)
+		FROM DUAL
+		</foreach>
+	</insert>
 </mapper>
 
 

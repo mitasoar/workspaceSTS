@@ -15,7 +15,7 @@
 	</div>
 	<div class="row mg-left-40">
 		<div class="col-6 bg-light pd-15 bd-rd-15">
-			<form class="row g-3" id="itemForm" action="/admin/insertItem" method="post">
+			<form class="row g-3" id="itemForm" action="/admin/insertItem" method="post" enctype="multipart/form-data">
 				<div class="col-12">
 					<label for="categorySelector" class="form-label">카테고리</label>
 					<select class="form-select" id="categorySeletor" name="cateCode">
@@ -36,6 +36,15 @@
 					<label for="bookIntro" class="form-label">도서소개</label>
 					<textarea rows="3" class="form-control" id="bookIntro" name="itemDetail"></textarea>
 				</div>
+				<div class="col-12">
+					<label for="img" class="form-label">대표이미지</label>
+					<input type="file" class="form-control" id="img" name="mainImg">
+				</div>
+				<div class="col-12">
+					<label for="subImg" class="form-label">추가이미지</label>
+					<input type="file" class="form-control" id="subImg" name="subImg" multiple>
+				</div>
+				
 				<div class="col-12 d-grid gap-2">
                   <button type="button" class="btn btn-secondary" onclick="addItem();">도서등록</button>
                </div>
