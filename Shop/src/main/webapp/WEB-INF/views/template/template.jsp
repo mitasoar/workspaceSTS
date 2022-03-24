@@ -33,7 +33,7 @@
 		</div>
 		<div class="row mg-top-15">
 			<c:choose>
-				<c:when test="${cateType eq 'admin'}">
+				<c:when test="${cateType eq 'admin' and login.isAdmin eq 'Y'}">
 					<div class="col-3">
 						<tiles:insertAttribute name="side"/>
 					</div>

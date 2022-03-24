@@ -32,5 +32,18 @@ public class ItemServiceImpl implements ItemService {
 		sqlSession.insert("itemMapper.insertImages", image);
 	}
 
+	@Override
+	public List<ItemVO> selectItemList() {
+		return sqlSession.selectList("itemMapper.selectItemList");
+	}
+
+	@Override
+	public ItemVO selectItemOne(String itemCode) {
+//		ItemVO item = sqlSession.selectOne("itemMapper.selectItemOne", itemCode);
+//		item.setImageList(sqlSession.selectList("itemMapper.selectItemImages", itemCode));
+//		return item;
+		return sqlSession.selectOne("itemMapper.selectItemDetail", itemCode);
+	}
+
 
 }

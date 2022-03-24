@@ -8,6 +8,9 @@ import com.kh.shop.vo.ItemVO;
 
 public interface ItemService {
 	
+	// 도서 목록 조회
+	List<ItemVO> selectItemList();
+	
 	// 카테고리 목록 조회
 	List<CategoryVO> selectCategoryList();
 	
@@ -16,5 +19,8 @@ public interface ItemService {
 	
 	// 도서 이미지 등록
 	void insertImages(ImageVO image);
+
+	// 도서 조회
+	ItemVO selectItemOne(String itemCode);
 	
 }

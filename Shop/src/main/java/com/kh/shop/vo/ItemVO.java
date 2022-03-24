@@ -1,9 +1,11 @@
 package com.kh.shop.vo;
 
+import java.util.List;
 import java.util.Objects;
 
 public class ItemVO {
-	private String itemCode, itemName, itemPrice, itemDetail, itemStock, cateCode;
+	private String itemCode, itemName, itemPrice, itemDetail, itemStock, cateCode, attachedImgName;
+	private List<ImageVO> imageList;
 	
 	public ItemVO() {
 		super();
@@ -28,7 +30,17 @@ public class ItemVO {
 		this.cateCode = cateCode;
 	}
 
-
+	public ItemVO(String itemCode, String itemName, String itemPrice, String itemDetail, String itemStock,
+			String cateCode, String attachedImgName) {
+		super();
+		this.itemCode = itemCode;
+		this.itemName = itemName;
+		this.itemPrice = itemPrice;
+		this.itemDetail = itemDetail;
+		this.itemStock = itemStock;
+		this.cateCode = cateCode;
+		this.attachedImgName = attachedImgName;
+	}
 
 	public String getItemCode() {
 		return itemCode;
@@ -78,9 +90,25 @@ public class ItemVO {
 		this.cateCode = cateCode;
 	}
 
+	public String getAttachedImgName() {
+		return attachedImgName;
+	}
+
+	public void setAttachedImgName(String attachedImgName) {
+		this.attachedImgName = attachedImgName;
+	}
+
+	public List<ImageVO> getImageList() {
+		return imageList;
+	}
+
+	public void setImageList(List<ImageVO> imageList) {
+		this.imageList = imageList;
+	}
+
 	@Override
 	public int hashCode() {
-		return Objects.hash(cateCode, itemCode, itemDetail, itemName, itemPrice, itemStock);
+		return Objects.hash(attachedImgName, cateCode, itemCode, itemDetail, itemName, itemPrice, itemStock);
 	}
 
 	@Override
@@ -92,15 +120,17 @@ public class ItemVO {
 		if (getClass() != obj.getClass())
 			return false;
 		ItemVO other = (ItemVO) obj;
-		return Objects.equals(cateCode, other.cateCode) && Objects.equals(itemCode, other.itemCode)
-				&& Objects.equals(itemDetail, other.itemDetail) && Objects.equals(itemName, other.itemName)
-				&& Objects.equals(itemPrice, other.itemPrice) && Objects.equals(itemStock, other.itemStock);
+		return Objects.equals(attachedImgName, other.attachedImgName) && Objects.equals(cateCode, other.cateCode)
+				&& Objects.equals(itemCode, other.itemCode) && Objects.equals(itemDetail, other.itemDetail)
+				&& Objects.equals(itemName, other.itemName) && Objects.equals(itemPrice, other.itemPrice)
+				&& Objects.equals(itemStock, other.itemStock);
 	}
 
 	@Override
 	public String toString() {
 		return "ItemVO [itemCode=" + itemCode + ", itemName=" + itemName + ", itemPrice=" + itemPrice + ", itemDetail="
-				+ itemDetail + ", itemStock=" + itemStock + ", cateCode=" + cateCode + "]";
+				+ itemDetail + ", itemStock=" + itemStock + ", cateCode=" + cateCode + ", attachedImgName=" + attachedImgName
+				+ "]";
 	}
-	
+
 }

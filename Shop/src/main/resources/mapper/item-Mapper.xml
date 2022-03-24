@@ -2,6 +2,16 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="itemMapper">
 
+	<resultMap type="com.kh.shop.vo.ItemVO" id="itemAndImage">
+		<id column="ITEM_CODE" property="itemCode"/>
+		<result column="ITEM_NAME" property="itemName"/>
+		<result column="ITEM_PRICE" property="itemPrice"/>
+		<result column="ITEM_DETAIL" property="itemDetail"/>
+		<result column="ITEM_STOCK" property="itemStock"/>
+		<result column="CATE_CODE" property="cateCode"/>
+		<collection property="imageList" resultMap="image"/>
+	</resultMap>
+
 	<resultMap type="com.kh.shop.vo.ItemVO" id="item">
 		<id column="ITEM_CODE" property="itemCode"/>
 		<result column="ITEM_NAME" property="itemName"/>
@@ -9,6 +19,7 @@
 		<result column="ITEM_DETAIL" property="itemDetail"/>
 		<result column="ITEM_STOCK" property="itemStock"/>
 		<result column="CATE_CODE" property="cateCode"/>
+		<result column="ATTACHED_IMG_NAME" property="attachedImgName"/>
 	</resultMap>
 	
 	<insert id="insertItem">
@@ -26,6 +37,45 @@
 			, #{cateCode}
 		)
 	</insert>
+	
+	<select id="selectItemList" resultMap="item">
+		SELECT ITEM.ITEM_CODE
+			, ITEM.ITEM_NAME
+			, ITEM.ITEM_PRICE
+			, ITEM.ITEM_DETAIL
+			, ITEM.ITEM_STOCK
+			, ITEM.CATE_CODE
+			, IMG.ATTACHED_IMG_NAME
+		FROM SHOP_ITEM ITEM LEFT OUTER JOIN ITEM_IMAGE IMG
+		ON ITEM.ITEM_CODE = IMG.ITEM_CODE
+		WHERE IMG.IS_MAIN IS NULL OR IMG.IS_MAIN = 'Y'
+		ORDER BY ITEM.ITEM_CODE DESC
+	</select>
+		
+	<select id="selectItemOne" resultMap="item">
+		SELECT ITEM_CODE
+			, ITEM_NAME
+			, ITEM_PRICE
+			, ITEM_DETAIL
+			, ITEM_STOCK
+			, CATE_CODE
+		FROM SHOP_ITEM
+		WHERE ITEM_CODE = #{itemCode}
+	</select>
+		
+	<select id="selectItemDetail" resultMap="itemAndImage">
+		SELECT ITEM.ITEM_CODE
+			, ITEM.ITEM_NAME
+			, ITEM.ITEM_PRICE
+			, ITEM.ITEM_DETAIL
+			, ITEM.ITEM_STOCK
+			, ITEM.CATE_CODE
+			, IMG.ATTACHED_IMG_NAME
+			, IMG.IS_MAIN
+		FROM SHOP_ITEM ITEM LEFT OUTER JOIN ITEM_IMAGE IMG
+		ON ITEM.ITEM_CODE = IMG.ITEM_CODE
+		WHERE ITEM.ITEM_CODE = #{itemCode}
+	</select>
 
 	<resultMap type="com.kh.shop.vo.CategoryVO" id="category">
 		<id column="CATE_CODE" property="cateCode"/>
@@ -63,6 +113,15 @@
 		FROM DUAL
 		</foreach>
 	</insert>
+	
+	<select id="selectItemImages" resultMap="image">
+		SELECT IMG_CODE
+			, ATTACHED_IMG_NAME
+			, IS_MAIN
+		FROM ITEM_IMAGE
+		WHERE ITEM_CODE = #{itemCode}
+	</select>
+	
 </mapper>
 
 

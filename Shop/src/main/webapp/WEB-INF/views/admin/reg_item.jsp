@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>책 등록 화면</title>
 </head>
 <body>
 	<div class="row text-center">
@@ -44,7 +44,6 @@
 					<label for="subImg" class="form-label">추가이미지</label>
 					<input type="file" class="form-control" id="subImg" name="subImg" multiple>
 				</div>
-				
 				<div class="col-12 d-grid gap-2">
                   <button type="button" class="btn btn-secondary" onclick="addItem();">도서등록</button>
                </div>

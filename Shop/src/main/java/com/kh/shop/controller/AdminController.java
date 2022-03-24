@@ -30,8 +30,7 @@ public class AdminController {
 	private ItemService itemService;
 	
 	@GetMapping("/regItem")
-	public String regItem(Model model, String cateType, HttpSession session) {
-		model.addAttribute("categoryList", itemService.selectCategoryList());
+	public String regItem(String cateType, HttpSession session) {
 		if (cateType != null) {
 			session.setAttribute("cateType", cateType);
 		}
@@ -113,8 +112,6 @@ public class AdminController {
 			}
 		}
 		
-		System.out.println(img);
-		System.out.println(list);
 		// 상품 이미지 정보 INSERT(ITEM_IMAGE)
 		if (list.size() != 0) {
 			itemService.insertImages(img);
@@ -122,7 +119,8 @@ public class AdminController {
 	}
 	
 	@GetMapping("/editItem")
-	public String editItem() {
+	public String editItem(Model model) {
+		model.addAttribute("itemList", itemService.selectItemList());
 		return "admin/item_manage";
 	}
 	

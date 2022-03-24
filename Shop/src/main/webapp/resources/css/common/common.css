@@ -73,4 +73,23 @@ body {
 	margin-left: 40px;
 }
 
+.h-250 {
+	height: 250px;
+}
 
+.w-200 {
+	width: 200px;
+}
+
+.w-40 {
+	width: 40%;
+}
+
+.over-hidden {
+	overflow: hidden;
+}
+
+.selectImg:hover {
+	cursor: pointer;
+	transform: scale(1.05);
+}
