@@ -40,8 +40,7 @@ public class ItemController {
 	
 	@GetMapping("/itemDetail")
 	public String itemDetail(String itemCode, Model model) {
-		ItemVO item = itemService.selectItemOne(itemCode);
-		model.addAttribute("item", item);
+		model.addAttribute("item", itemService.selectItemOne(itemCode));
 		return "item/item_detail";
 	}
 

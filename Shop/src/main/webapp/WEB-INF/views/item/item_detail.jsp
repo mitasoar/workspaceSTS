@@ -32,6 +32,8 @@
 						">
 					</td>
 					<td>
+						<input type="hidden" name="memId" id="memId" value="${login.memId}">
+						<input type="hidden" name="itemCode" id="itemCode" value="${item.itemCode}">
 						<p>상품명 : ${item.itemName}</p>
 						<p>가격 : <fmt:formatNumber type="currency" value="${item.itemPrice}"/></p>
 						<p>수량 : 
@@ -43,7 +45,7 @@
 						</p>
 						<p>총가격 : <span id="totalPrice" data-price="${item.itemPrice}"><fmt:formatNumber type="currency" value="${item.itemPrice}"/></span></p>
 						<p>
-							<button class="form-control d-inline w-40">
+							<button class="form-control d-inline w-40" onclick="insertCart();">
 								<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
 								  <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
 								</svg>
@@ -64,10 +66,12 @@
 				<tr>
 					<td colspan="2" class="text-center">
 						<c:forEach items="${item.imageList}" var="image">
-							<img class="w-200 h-250" alt="${item.itemName}" src="/resources/images/
-							<c:if test="${empty image.attachedImgName}">no_image.jpg</c:if>
-							<c:if test="${not empty image.attachedImgName}">${image.attachedImgName}</c:if>
-							">
+							<c:if test="${empty image.attachedImgName}">
+								<img class="w-200 h-250" alt="${item.itemName}" src="/resources/images/no_image.jpg">
+							</c:if>
+							<c:if test="${not empty image.attachedImgName and image.isMain eq 'N'}">
+								<img class="w-200 h-250" alt="${item.itemName}" src="/resources/images/${image.attachedImgName}">
+							</c:if>
 						</c:forEach>
 					</td>
 				</tr>

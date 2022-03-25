@@ -85,6 +85,14 @@ body {
 	width: 40%;
 }
 
+.w-100px {
+	width: 100px;
+}
+
+.h-150px {
+	height: 150px;
+}
+
 .over-hidden {
 	overflow: hidden;
 }

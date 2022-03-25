@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cartMapper">
+
+	<resultMap type="com.kh.shop.vo.CartVO" id="cart">
+		<id column="CART_NUM" property="cartNum"/>
+		<result column="MEM_ID" property="memId"/>
+		<result column="ITEM_CODE" property="itemCode"/>
+		<result column="ITEM_CNT" property="itemCnt"/>
+		<result column="CREATE_DATE" property="createDate"/>
+		<result column="TOTAL_PRICE" property="totalPrice"/>
+		<association property="item" resultMap="itemMapper.item" />
+	</resultMap>
+	
+	<select id="selectCartList" resultMap="cart">
+		SELECT CART.CART_NUM
+			, CART.ITEM_CODE
+			, CART.ITEM_CNT
+			, ITEM.ITEM_NAME
+			, ITEM.ITEM_PRICE
+			, ITEM.ATTACHED_IMG_NAME
+			, ITEM.ITEM_PRICE * CART.ITEM_CNT AS TOTAL_PRICE
+		FROM SHOP_CART CART, 
+		(SELECT ITEM.ITEM_CODE
+				, ITEM.ITEM_NAME
+				, ITEM.ITEM_PRICE
+				, IMAGE.ATTACHED_IMG_NAME
+			FROM SHOP_ITEM ITEM LEFT OUTER JOIN ITEM_IMAGE IMAGE
+			ON ITEM.ITEM_CODE = IMAGE.ITEM_CODE
+			WHERE IMAGE.IS_MAIN IS NULL OR IMAGE.IS_MAIN = 'Y'
+		) ITEM
+		WHERE CART.ITEM_CODE = ITEM.ITEM_CODE AND CART.MEM_ID = #{memId}
+		ORDER BY CART.CART_NUM DESC
+	</select>
+	
+	<insert id="insertCart">
+		INSERT INTO SHOP_CART (
+			CART_NUM
+			, MEM_ID
+			, ITEM_CODE
+			, ITEM_CNT
+		) VALUES (
+			SEQ_CART_NUM.NEXTVAL
+			, #{memId}
+			, #{itemCode}
+			, #{itemCnt}
+		)
+	</insert>
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+

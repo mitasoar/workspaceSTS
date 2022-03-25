@@ -18,6 +18,7 @@
 				</c:when>
 				<c:otherwise>
 					<span class="loginSpan">${login.memName}님 반갑습니다 ^_^</span>
+					<button type="button" class="btn btn-light" onclick="location.href='/cart/cartList'">장바구니</button> 
 					<button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#editModal">회원정보</button> 
 					<button type="button" class="btn btn-light" onclick="logout();">로그아웃</button> 
 				</c:otherwise>
