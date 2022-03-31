@@ -3,7 +3,7 @@ package com.kh.shop.vo;
 import java.util.Objects;
 
 public class CartVO {
-	private String cartNum, memId, itemCode, itemCnt, createDate, totalPrice;
+	private String cartNum, memId, itemCode, itemCnt, createDate, totalPrice, isBuy;
 	private ItemVO item;
 	
 	public CartVO() {
@@ -25,6 +25,26 @@ public class CartVO {
 		this.itemCode = itemCode;
 		this.itemCnt = itemCnt;
 		this.totalPrice = totalPrice;
+	}
+	
+	public CartVO(String cartNum, String memId, String itemCode, String itemCnt, String createDate, String totalPrice,
+			String isBuy) {
+		super();
+		this.cartNum = cartNum;
+		this.memId = memId;
+		this.itemCode = itemCode;
+		this.itemCnt = itemCnt;
+		this.createDate = createDate;
+		this.totalPrice = totalPrice;
+		this.isBuy = isBuy;
+	}
+
+	public String getIsBuy() {
+		return isBuy;
+	}
+
+	public void setIsBuy(String isBuy) {
+		this.isBuy = isBuy;
 	}
 
 	public String getTotalPrice() {
@@ -83,29 +103,4 @@ public class CartVO {
 		this.createDate = createDate;
 	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(cartNum, createDate, itemCnt, itemCode, memId);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		CartVO other = (CartVO) obj;
-		return Objects.equals(cartNum, other.cartNum) && Objects.equals(createDate, other.createDate)
-				&& Objects.equals(itemCnt, other.itemCnt) && Objects.equals(itemCode, other.itemCode)
-				&& Objects.equals(memId, other.memId);
-	}
-
-	@Override
-	public String toString() {
-		return "CartVO [cartNum=" + cartNum + ", memId=" + memId + ", itemCode=" + itemCode + ", itemCnt=" + itemCnt
-				+ ", createDate=" + createDate + "]";
-	}
-	
 }

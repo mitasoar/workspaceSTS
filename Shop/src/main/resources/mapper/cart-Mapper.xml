@@ -9,41 +9,118 @@
 		<result column="ITEM_CNT" property="itemCnt"/>
 		<result column="CREATE_DATE" property="createDate"/>
 		<result column="TOTAL_PRICE" property="totalPrice"/>
+		<result column="IS_BUY" property="isBuy"/>
 		<association property="item" resultMap="itemMapper.item" />
 	</resultMap>
 	
 	<select id="selectCartList" resultMap="cart">
 		SELECT CART.CART_NUM
-			, CART.ITEM_CODE
-			, CART.ITEM_CNT
-			, ITEM.ITEM_NAME
-			, ITEM.ITEM_PRICE
-			, ITEM.ATTACHED_IMG_NAME
-			, ITEM.ITEM_PRICE * CART.ITEM_CNT AS TOTAL_PRICE
-		FROM SHOP_CART CART, 
-		(SELECT ITEM.ITEM_CODE
-				, ITEM.ITEM_NAME
-				, ITEM.ITEM_PRICE
-				, IMAGE.ATTACHED_IMG_NAME
-			FROM SHOP_ITEM ITEM LEFT OUTER JOIN ITEM_IMAGE IMAGE
-			ON ITEM.ITEM_CODE = IMAGE.ITEM_CODE
-			WHERE IMAGE.IS_MAIN IS NULL OR IMAGE.IS_MAIN = 'Y'
-		) ITEM
-		WHERE CART.ITEM_CODE = ITEM.ITEM_CODE AND CART.MEM_ID = #{memId}
+		    , CART.ITEM_CODE
+		    , CART.ITEM_CNT
+		    , ITEM.ITEM_NAME
+		    , ITEM.ITEM_PRICE
+		    , IMAGE.ATTACHED_IMG_NAME
+		    , ITEM.ITEM_PRICE * CART.ITEM_CNT AS TOTAL_PRICE
+		FROM SHOP_CART CART, SHOP_ITEM ITEM LEFT OUTER JOIN ITEM_IMAGE IMAGE
+		ON ITEM.ITEM_CODE = IMAGE.ITEM_CODE
+		WHERE CART.ITEM_CODE = ITEM.ITEM_CODE AND NVL(IMAGE.IS_MAIN, 'Y') = 'Y' AND CART.MEM_ID = #{memId} AND CART.IS_BUY = 'N'
 		ORDER BY CART.CART_NUM DESC
 	</select>
 	
 	<insert id="insertCart">
-		INSERT INTO SHOP_CART (
-			CART_NUM
+		MERGE INTO SHOP_CART
+		USING DUAL
+		ON (MEM_ID = #{memId} AND ITEM_CODE = #{itemCode} AND IS_BUY = 'N')
+		WHEN MATCHED THEN
+			UPDATE
+			SET ITEM_CNT = ITEM_CNT + #{itemCnt}
+		WHEN NOT MATCHED THEN
+			INSERT (
+				CART_NUM
+				, MEM_ID
+				, ITEM_CODE
+				, ITEM_CNT
+			) VALUES (
+				SEQ_CART_NUM.NEXTVAL
+				, #{memId}
+				, #{itemCode}
+				, #{itemCnt}
+			)
+	</insert>
+	
+	<update id="updateCart">
+		UPDATE SHOP_CART
+		SET ITEM_CNT = #{itemCnt}
+		WHERE CART_NUM = #{cartNum}
+	</update>
+	
+	<delete id="deleteCart">
+		DELETE FROM SHOP_CART
+		WHERE CART_NUM = #{cartNum}
+	</delete>
+	
+	<delete id="deleteCartList">
+		DELETE FROM SHOP_CART
+		WHERE CART_NUM IN
+		<foreach collection="array" item="cartNum" separator="," open="(" close=")">
+           	${cartNum}
+       	</foreach>
+	</delete>
+	
+	<update id="updateBuyCart">
+		UPDATE SHOP_CART
+		SET IS_BUY = 'Y'
+		WHERE CART_NUM IN
+		<foreach collection="array" item="cartNum" separator="," open="(" close=")">
+           	${cartNum}
+       	</foreach>
+	</update>
+	
+	<resultMap type="com.kh.shop.vo.BuyItemVO" id="buyItem">
+		<id column="BUY_NUM" property="buyNum"/>
+		<result column="MEM_ID" property="memId"/>
+		<result column="ITEM_CODE" property="itemCode"/>
+		<result column="ITEM_CNT" property="itemCnt"/>
+		<result column="BUY_PRICE" property="buyPrice"/>
+		<result column="BUY_DATE" property="buyDate"/>
+		<result column="ORDER_NUM" property="orderNum"/>
+	</resultMap>
+	
+	<insert id="buyItemList">
+		INSERT INTO SHOP_BUY (
+			BUY_NUM
 			, MEM_ID
 			, ITEM_CODE
 			, ITEM_CNT
+			, BUY_PRICE
+			, ORDER_NUM
+		)
+		<foreach collection="array" item="item" index="i" separator="UNION ALL">
+		SELECT (SELECT NVL(MAX(BUY_NUM), 0) FROM SHOP_BUY) + #{i} + 1
+			, #{item.memId}
+			, #{item.itemCode}
+			, #{item.itemCnt}
+			, #{item.buyPrice}
+			, #{item.orderNum}
+		FROM DUAL
+		</foreach>
+	</insert>
+	
+	<insert id="buyItem">
+		INSERT INTO SHOP_BUY (
+			BUY_NUM
+			, MEM_ID
+			, ITEM_CODE
+			, ITEM_CNT
+			, BUY_PRICE
+			, ORDER_NUM
 		) VALUES (
-			SEQ_CART_NUM.NEXTVAL
+			(SELECT NVL(MAX(BUY_NUM), 0) FROM SHOP_BUY) + 1
 			, #{memId}
 			, #{itemCode}
 			, #{itemCnt}
+			, #{buyPrice}
+			, #{orderNum}
 		)
 	</insert>
 	

@@ -85,6 +85,26 @@ body {
 	width: 40%;
 }
 
+.w-30 {
+	width: 30%;
+}
+
+.w-20 {
+	width: 20%;
+}
+
+.w-15 {
+	width: 15%;
+}
+
+.w-10 {
+	width: 10%;
+}
+
+.w-5 {
+	width: 5%;
+}
+
 .w-100px {
 	width: 100px;
 }
@@ -100,4 +120,9 @@ body {
 .selectImg:hover {
 	cursor: pointer;
 	transform: scale(1.05);
+}
+
+.form-check-input:checked {
+    background-color: #212529;
+    border-color: #212529;
 }
