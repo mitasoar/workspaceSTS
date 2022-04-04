@@ -38,7 +38,8 @@ function selectAll(selectAll)  { // 전체 체크박스 선택, 해제
   checkboxes.forEach((checkbox) => {
     checkbox.checked = selectAll.checked;
   })
-  setAllPrice();
+  
+  if (checkboxes.length > 0) setAllPrice();
 }
 
 selectAll(document.getElementById('checkAll'));
@@ -115,31 +116,32 @@ function buyAll() {
 		alert('장바구니 상품 중 수량 변경이 완료되지 않은 상품이 있습니다.\n새로고침하거나 수량변경 후 다시 구매버튼을 눌러주세요.');
 	} else {
 		const checkboxes = document.querySelectorAll('.chk:checked');
-		let buyItemList = [];
+		if (confirm('선택한 ' + checkboxes.length + '개의 장바구니 상품을 구매하시겠습니까?')) {
+			let buyItemList = [];
 		
-		checkboxes.forEach((checkbox) => {
-	    	buyItemList.push(
-				{ cartNum: checkbox.value
-				  , itemCode: document.getElementById('itemCode' + checkbox.value).value
-				  , itemCnt: document.getElementById('itemCnt' + checkbox.value).value
-				  , buyPrice: document.getElementById('totalPrice' + checkbox.value).value
-				}
-			);
-	  	})
-	  	
-	  	$.ajax({
-	      method: 'POST',
-	      url: '/cart/buyItemList',
-	      contentType:'application/json; charset=UTF-8',
-	      data: JSON.stringify(buyItemList),
-	      success: function () {
-	        alert("선택하신 상품이 정상적으로 구매되었습니다.");
-	        location.reload();
-	      },
-	      error: function () {
-			alert("상품 구매 오류.. 다시 확인해주세요.");
-		  }
-	    });
-	  	
+			checkboxes.forEach((checkbox) => {
+		    	buyItemList.push(
+					{ cartNum: checkbox.value
+					  , itemCode: document.getElementById('itemCode' + checkbox.value).value
+					  , itemCnt: document.getElementById('itemCnt' + checkbox.value).value
+					  , buyPrice: document.getElementById('totalPrice' + checkbox.value).value
+					}
+				);
+		  	})
+		  	
+		  	$.ajax({
+		      method: 'POST',
+		      url: '/cart/buyItemList',
+		      contentType:'application/json; charset=UTF-8',
+		      data: JSON.stringify(buyItemList),
+		      success: function () {
+		        alert("선택하신 상품이 정상적으로 구매되었습니다.");
+		        location.reload();
+		      },
+		      error: function () {
+				alert("상품 구매 오류.. 다시 확인해주세요.");
+			  }
+		    });
+		}
 	}
 }

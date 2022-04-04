@@ -2,7 +2,9 @@ package com.kh.shop.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
 
@@ -16,9 +18,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-
+import org.springframework.web.multipart.MultipartHttpServletRequest;import com.kh.shop.service.CartService;
 import com.kh.shop.service.ItemService;
+import com.kh.shop.vo.BuyItemVO;
 import com.kh.shop.vo.ImageVO;
 import com.kh.shop.vo.ItemVO;
 
@@ -31,6 +33,8 @@ public class AdminController {
 	
 	@GetMapping("/regItem")
 	public String regItem(String cateType, HttpSession session) {
+		if (backHome(session)) return "redirect:/item/itemList";
+		
 		if (cateType != null) {
 			session.setAttribute("cateType", cateType);
 		}
@@ -39,10 +43,7 @@ public class AdminController {
 	
 	@PostMapping("/insertItem")
 	@ResponseBody
-	public void insertItem(ItemVO item, MultipartHttpServletRequest multi) {
-		// 상품 정보 INSERT (SHOP_ITEM)
-		itemService.insertItem(item);
-		
+	public void insertItem(ItemVO item, MultipartHttpServletRequest multi, HttpSession session) {
 		// 이미지를 첨부 할 객체 생성
 		ImageVO img= new ImageVO(new ArrayList<>());
 		List<ImageVO> list = img.getImgList();
@@ -112,25 +113,61 @@ public class AdminController {
 			}
 		}
 		
-		// 상품 이미지 정보 INSERT(ITEM_IMAGE)
+		// 상품 정보 INSERT (SHOP_ITEM)
 		if (list.size() != 0) {
-			itemService.insertImages(img);
+			itemService.insertItem(item, img);
+		} else {
+			itemService.insertItem(item);
 		}
 	}
 	
 	@GetMapping("/editItem")
-	public String editItem(Model model) {
+	public String editItem(Model model, HttpSession session) {
+		if (backHome(session)) return "redirect:/item/itemList";
 		model.addAttribute("itemList", itemService.selectItemList());
 		return "admin/item_manage";
 	}
 	
+	@GetMapping("/buyList")
+	public String buyList(BuyItemVO buyItem, Model model, HttpSession session) {
+		if (backHome(session)) return "redirect:/item/itemList";
+		
+		String today = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
+		
+		if (buyItem.getBeforeDate() == null || buyItem.getBeforeDate().equals("")) {
+			buyItem.setBeforeDate(today.substring(0, today.length() - 1) + "1");
+		}
+		if (buyItem.getAfterDate() == null || buyItem.getAfterDate().equals("") ) {
+			buyItem.setAfterDate(today);
+		}
+		
+		model.addAttribute("buyItem", buyItem);
+		model.addAttribute("buyList", itemService.selectBuyList(buyItem));
+		
+		return "admin/buy_list";
+	}
+	
+	@GetMapping("/buyOrderInfo")
+	@ResponseBody
+	public List<BuyItemVO> buyOrderInfo(String orderNum) {
+		System.out.println("들어옴@@@@@@@@@@@@@@@@@@@@@@@@");
+		return itemService.selectOrderInfo(orderNum);
+	}
+	
+	
 	@GetMapping("/editCate")
-	public String editCate() {
+	public String editCate(HttpSession session) {
+		if (backHome(session)) return "redirect:/item/itemList";
 		return "admin/category_manage";
 	}
 	
 	@GetMapping("/editMember")
-	public String editMember() {
+	public String editMember(HttpSession session) {
+		if (backHome(session)) return "redirect:/item/itemList";
 		return "admin/member_manage";
+	}
+	
+	boolean backHome(HttpSession session) {
+		return session.getAttribute("login") == null ? true : false;
 	}
 }

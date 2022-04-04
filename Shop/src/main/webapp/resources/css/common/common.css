@@ -69,8 +69,44 @@ body {
 	margin-top: 15px;
 }
 
+.mg-bot-30px {
+	margin-bottom: 30px;
+}
+
+.mg-left-15 {
+	margin-left: 15%;
+}
+
+.mg-left-20 {
+	margin-left: 20%;
+}
+
 .mg-left-40 {
 	margin-left: 40px;
+}
+
+.mg-left-10px {
+	margin-left: 10px;
+}
+
+.mg-left-40px {
+	margin-left: 40px;
+}
+
+.mg-left-90px {
+	margin-left: 90px;
+}
+
+.mg-left-100px {
+	margin-left: 100px;
+}
+
+.mg-left-150px {
+	margin-left: 150px;
+}
+
+.mg-left-200px {
+	margin-left: 200px;
 }
 
 .h-250 {
@@ -87,6 +123,10 @@ body {
 
 .w-30 {
 	width: 30%;
+}
+
+.w-35 {
+	width: 35%;
 }
 
 .w-20 {

@@ -8,12 +8,12 @@
 <title>책 등록 화면</title>
 </head>
 <body>
-	<div class="row text-center">
+	<div class="row text-center mg-left-15">
 		<div class="col-7">
 			<h4>책 등록</h4>
 		</div>
 	</div>
-	<div class="row mg-left-40">
+	<div class="row mg-left-20 mg-bot-30px">
 		<div class="col-6 bg-light pd-15 bd-rd-15">
 			<form class="row g-3" id="itemForm" action="/admin/insertItem" method="post" enctype="multipart/form-data">
 				<div class="col-12">

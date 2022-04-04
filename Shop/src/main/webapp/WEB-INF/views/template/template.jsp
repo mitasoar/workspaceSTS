@@ -34,10 +34,10 @@
 		<div class="row mg-top-15">
 			<c:choose>
 				<c:when test="${cateType eq 'admin' and login.isAdmin eq 'Y'}">
-					<div class="col-3">
+					<div class="col-2">
 						<tiles:insertAttribute name="side"/>
 					</div>
-					<div class="col-9">
+					<div class="col-10">
 						<tiles:insertAttribute name="body"/>
 					</div>
 				</c:when>

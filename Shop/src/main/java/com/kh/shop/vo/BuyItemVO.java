@@ -1,7 +1,9 @@
 package com.kh.shop.vo;
 
 public class BuyItemVO {
-	private String buyNum, memId, itemCode, itemCnt, buyPrice, buyDate, orderNum, cartNum;
+	private String buyNum, memId, itemCode, itemCnt, buyPrice, buyDate, orderNum, cartNum, beforeDate, afterDate;
+	private MemberVO member;
+	private CartVO cart;
 	
 	public BuyItemVO() {
 		super();
@@ -35,6 +37,38 @@ public class BuyItemVO {
 		this.buyPrice = buyPrice;
 		this.buyDate = buyDate;
 		this.orderNum = orderNum;
+	}
+
+	public MemberVO getMember() {
+		return member;
+	}
+
+	public void setMember(MemberVO member) {
+		this.member = member;
+	}
+
+	public CartVO getCart() {
+		return cart;
+	}
+
+	public void setCart(CartVO cart) {
+		this.cart = cart;
+	}
+
+	public String getBeforeDate() {
+		return beforeDate;
+	}
+
+	public void setBeforeDate(String beforeDate) {
+		this.beforeDate = beforeDate;
+	}
+
+	public String getAfterDate() {
+		return afterDate;
+	}
+
+	public void setAfterDate(String afterDate) {
+		this.afterDate = afterDate;
 	}
 
 	public String getBuyNum() {
@@ -105,7 +139,7 @@ public class BuyItemVO {
 	public String toString() {
 		return "BuyItemVO [buyNum=" + buyNum + ", memId=" + memId + ", itemCode=" + itemCode + ", itemCnt=" + itemCnt
 				+ ", buyPrice=" + buyPrice + ", buyDate=" + buyDate + ", orderNum=" + orderNum + ", cartNum=" + cartNum
-				+ "]";
+				+ ", beforeDate=" + beforeDate + ", afterDate=" + afterDate + "]";
 	}
 	
 }

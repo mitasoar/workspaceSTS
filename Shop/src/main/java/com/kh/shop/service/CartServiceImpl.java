@@ -41,6 +41,7 @@ public class CartServiceImpl implements CartService {
 	}
 
 	@Override
+	@Transactional(rollbackFor = Exception.class)
 	public void buyItemList(BuyItemVO[] itemList, String[] cartList) {
 		sqlSession.insert("cartMapper.buyItemList", itemList);
 		sqlSession.update("cartMapper.updateBuyCart", cartList);
