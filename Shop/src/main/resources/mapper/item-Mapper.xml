@@ -38,7 +38,40 @@
 		)
 	</insert>
 	
-	<select id="selectItemList" resultMap="item">
+	<select id="countItem" resultType="int" parameterType="String">
+		SELECT COUNT(*) 
+		FROM SHOP_ITEM
+		<if test="_parameter != null and _parameter != ''">
+		WHERE CATE_CODE = #{cateType}
+		</if>
+	</select>
+	
+	<select id="selectItemListPaging" resultMap="item">
+		SELECT * 
+		FROM (
+			SELECT ROWNUM RN, A.* 
+				FROM (
+						SELECT ITEM.ITEM_CODE
+							, ITEM.ITEM_NAME
+							, ITEM.ITEM_PRICE
+							, ITEM.ITEM_DETAIL
+							, ITEM.ITEM_STOCK
+							, ITEM.CATE_CODE
+							, IMG.ATTACHED_IMG_NAME
+						FROM SHOP_ITEM ITEM LEFT OUTER JOIN ITEM_IMAGE IMG
+						ON ITEM.ITEM_CODE = IMG.ITEM_CODE
+						WHERE (IMG.IS_MAIN IS NULL OR IMG.IS_MAIN = 'Y')
+						<if test="cateType != null and cateType != ''">
+							AND ITEM.CATE_CODE = #{cateType}
+						</if>
+						ORDER BY ITEM.ITEM_CODE DESC 
+						) A
+				WHERE ROWNUM &lt;= #{end}
+				)
+		WHERE RN &gt;= #{start}
+	</select>
+	
+	<select id="selectItemList" resultMap="item" parameterType="String">
 		SELECT ITEM.ITEM_CODE
 			, ITEM.ITEM_NAME
 			, ITEM.ITEM_PRICE
@@ -48,7 +81,10 @@
 			, IMG.ATTACHED_IMG_NAME
 		FROM SHOP_ITEM ITEM LEFT OUTER JOIN ITEM_IMAGE IMG
 		ON ITEM.ITEM_CODE = IMG.ITEM_CODE
-		WHERE IMG.IS_MAIN IS NULL OR IMG.IS_MAIN = 'Y'
+		WHERE (IMG.IS_MAIN IS NULL OR IMG.IS_MAIN = 'Y')
+		<if test="_parameter != null and _parameter != ''">
+			AND ITEM.CATE_CODE = #{cateType}
+		</if>
 		ORDER BY ITEM.ITEM_CODE DESC
 	</select>
 		

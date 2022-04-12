@@ -100,8 +100,9 @@ function setAllPrice() { // 총 주문금액 셋팅
 
 let changeCntCheck = false; // 수량 변경 여부 체크
 
-function changeCnt(itemCnt, statusCnt, itemPrice) { // 수량 변경 시
+function changeCnt(itemCnt, statusCnt, itemPrice, cartNum) { // 수량 변경 시
 	document.getElementById('viewTotalPrice'+statusCnt).innerText = '￦' + Number(itemCnt.value * itemPrice).toLocaleString();
+	document.getElementById('totalPrice'+cartNum).value = Number(itemCnt.value * itemPrice);
 	if (itemCnt.value == document.getElementById('beforeCnt'+statusCnt).value) {
 		itemCnt.style.borderColor = '#ced4da';
 		changeCntCheck = false;
@@ -109,6 +110,8 @@ function changeCnt(itemCnt, statusCnt, itemPrice) { // 수량 변경 시
 		itemCnt.style.borderColor = 'red';
 		changeCntCheck = true;
 	}
+	
+	setAllPrice();
 }
 
 function buyAll() {

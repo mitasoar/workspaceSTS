@@ -13,41 +13,41 @@
 		<div class="col text-end">
 			<c:choose>
 				<c:when test="${empty login}">
-					<button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#loginModal">로그인</button> 
-					<button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#joinModal">회원가입</button> 
+					<button type="button" class="btn btn-warning bg-gradient" data-bs-toggle="modal" data-bs-target="#loginModal">로그인</button> 
+					<button type="button" class="btn btn-warning bg-gradient" data-bs-toggle="modal" data-bs-target="#joinModal">회원가입</button> 
 				</c:when>
 				<c:otherwise>
 					<span class="loginSpan">${login.memName}님 반갑습니다 ^_^</span>
-					<button type="button" class="btn btn-light" onclick="location.href='/cart/cartList'">장바구니</button> 
-					<button type="button" class="btn btn-light" data-bs-toggle="modal" data-bs-target="#editModal">회원정보</button> 
-					<button type="button" class="btn btn-light" onclick="logout();">로그아웃</button> 
+					<button type="button" class="btn btn-warning bg-gradient" onclick="location.href='/cart/cartList'">장바구니</button> 
+					<button type="button" class="btn btn-warning bg-gradient" data-bs-toggle="modal" data-bs-target="#editModal">회원정보</button> 
+					<button type="button" class="btn btn-warning bg-gradient" onclick="logout();">로그아웃</button> 
 				</c:otherwise>
 			</c:choose>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col text-center">
-			<h2>BOOK SHOP</h2>
+			<h1>BOOK SHOP</h1>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col">
-			<nav class="navbar navbar-expand-lg navbar-light bg-light">
+			<nav class="navbar navbar-expand-lg navbar-light bg-warning bg-gradient">
 				<div class="container-fluid">
 					<div class="collapse navbar-collapse" id="navbarNav">
 						<ul class="navbar-nav me-auto mb-2 mb-lg-0">
 							<li class="nav-item">
-								<a class="nav-link <c:if test="${empty cateType}">active</c:if>" href="/item/itemList">전체상품</a>
+								<a class="nav-link <c:if test="${empty cateType}">active fs-5</c:if>" href="/item/itemList?cateType=all">전체상품</a>
 							</li>
 							<c:forEach items="${categoryList}" var="category">
 								<li class="nav-item">
-									<a class="nav-link <c:if test="${cateType eq category.cateCode}">active</c:if>" href="/item/itemList?cateType=${category.cateCode}">${category.cateName}</a>
+									<a class="nav-link <c:if test="${cateType eq category.cateCode}">active fs-5</c:if>" href="/item/itemList?cateType=${category.cateCode}">${category.cateName}</a>
 								</li>
 							</c:forEach>
 						</ul>
 						<c:if test="${login.isAdmin eq 'Y'}">
 							<div class="navbar-nav nav-item">
-								<a class="nav-link <c:if test="${cateType eq 'admin'}">active</c:if>" href="/admin/regItem?cateType=admin">관리자메뉴</a>
+								<a class="nav-link <c:if test="${cateType eq 'admin'}">active fs-5</c:if>" href="/admin/regItem?cateType=admin">관리자메뉴</a>
 							</div>
 						</c:if>
 					</div>

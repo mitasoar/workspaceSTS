@@ -12,7 +12,11 @@ function buyOrderInfo(orderNum) {
 			for (let i = 0; i < data.length; i++) {
 				orderList += "<tr>";
 				orderList += "<td>" + (i + 1) + "</td>";
-				orderList += "<td>" + "<img width='100px' height='150px' alt='" + data[i].cart.item.itemName + "' src='/resources/images/" + data[i].cart.item.attachedImgName + "'>" + "</td>";
+				if (data[i].cart.item.attachedImgName == null || data[i].cart.item.attachedImgName == '') {
+					orderList += "<td>" + "<img width='100px' height='150px' alt='" + data[i].cart.item.itemName + "' src='/resources/images/no_image.jpg'>" + "</td>";
+				} else {
+					orderList += "<td>" + "<img width='100px' height='150px' alt='" + data[i].cart.item.itemName + "' src='/resources/images/" + data[i].cart.item.attachedImgName + "'>" + "</td>";
+				}
 				orderList += "<td>" + data[i].cart.item.itemName + "</td>";
 				orderList += "<td>" + data[i].itemCnt + "</td>";
 				orderList += "<td>" + "￦" + Number(data[i].cart.totalPrice).toLocaleString() + "</td>";

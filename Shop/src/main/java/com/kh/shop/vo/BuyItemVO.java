@@ -1,9 +1,10 @@
 package com.kh.shop.vo;
 
 public class BuyItemVO {
-	private String buyNum, memId, itemCode, itemCnt, buyPrice, buyDate, orderNum, cartNum, beforeDate, afterDate;
+	private String buyNum, memId, itemCode, itemCnt, buyPrice, buyDate, orderNum, cartNum, beforeDate, afterDate, rn;
 	private MemberVO member;
 	private CartVO cart;
+	private PagingVO paging;
 	
 	public BuyItemVO() {
 		super();
@@ -37,6 +38,22 @@ public class BuyItemVO {
 		this.buyPrice = buyPrice;
 		this.buyDate = buyDate;
 		this.orderNum = orderNum;
+	}
+
+	public PagingVO getPaging() {
+		return paging;
+	}
+
+	public void setPaging(PagingVO paging) {
+		this.paging = paging;
+	}
+	
+	public String getRn() {
+		return rn;
+	}
+
+	public void setRn(String rn) {
+		this.rn = rn;
 	}
 
 	public MemberVO getMember() {

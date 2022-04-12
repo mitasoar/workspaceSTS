@@ -49,9 +49,9 @@
 					</tr>
 				</c:if>
 				<c:if test="${not empty buyList}">
-					<c:forEach items="${buyList}" var="item" varStatus="status">
+					<c:forEach items="${buyList}" var="item">
 						<tr>
-							<td>${status.count}</td>
+							<td>${item.rn}</td>
 							<td><span role="button" data-bs-toggle="modal" data-bs-target="#buyInfoModal" onclick="buyOrderInfo('${item.orderNum}');">${item.orderNum}</span></td>
 							<td>${item.memId}(${item.member.memName})</td>
 							<td>${item.buyDate}</td>
@@ -60,6 +60,29 @@
 				</c:if>
 			</tbody>
 		</table>
+		<nav aria-label="Page navigation example">
+		  <ul class="pagination  justify-content-center">
+		  	<c:if test="${buyItem.paging.startPage != 1}">
+			    <li class="page-item">
+			      <a class="page-link link-secondary" href="/admin/buyList?nowPage=${buyItem.paging.startPage - 1}&orderNum=${buyItem.orderNum}&memId=${buyItem.memId}&beforeDate=${buyItem.beforeDate}&afterDate=${buyItem.afterDate}" aria-label="Previous">
+			        <span aria-hidden="true">&laquo;</span>
+			      </a>
+			    </li>
+		    </c:if>
+		    <c:forEach begin="${buyItem.paging.startPage }" end="${buyItem.paging.endPage }" var="p">
+		   		<li class="page-item <c:if test="${p == buyItem.paging.nowPage}">active</c:if>" aria-current="page">
+	      			<a class="page-link link-secondary" href="/admin/buyList?nowPage=${p}&orderNum=${buyItem.orderNum}&memId=${buyItem.memId}&beforeDate=${buyItem.beforeDate}&afterDate=${buyItem.afterDate}">${p }</a>
+	    		</li>
+			</c:forEach>
+		    <c:if test="${buyItem.paging.endPage != buyItem.paging.lastPage}">
+			    <li class="page-item">
+			      <a class="page-link link-secondary" href="/admin/buyList?nowPage=${buyItem.paging.endPage + 1}&orderNum=${buyItem.orderNum}&memId=${buyItem.memId}&beforeDate=${buyItem.beforeDate}&afterDate=${buyItem.afterDate}" aria-label="Next">
+			        <span aria-hidden="true">&raquo;</span>
+			      </a>
+			    </li>
+		    </c:if>
+		  </ul>
+		</nav>
 	</div>
 	
 <!-- Modal -->

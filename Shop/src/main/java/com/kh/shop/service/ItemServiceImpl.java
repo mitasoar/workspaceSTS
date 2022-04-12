@@ -11,6 +11,7 @@ import com.kh.shop.vo.BuyItemVO;
 import com.kh.shop.vo.CategoryVO;
 import com.kh.shop.vo.ImageVO;
 import com.kh.shop.vo.ItemVO;
+import com.kh.shop.vo.PagingVO;
 
 @Service("itemService")
 public class ItemServiceImpl implements ItemService {
@@ -35,21 +36,13 @@ public class ItemServiceImpl implements ItemService {
 		return sqlSession.selectList("itemMapper.selectCategoryList");
 	}
 
-//	@Override
-//	public void insertImages(ImageVO image) {
-//		sqlSession.insert("itemMapper.insertImages", image);
-//	}
-
 	@Override
-	public List<ItemVO> selectItemList() {
-		return sqlSession.selectList("itemMapper.selectItemList");
+	public List<ItemVO> selectItemList(String cateType) {
+		return sqlSession.selectList("itemMapper.selectItemList", cateType);
 	}
 
 	@Override
 	public ItemVO selectItemOne(String itemCode) {
-//		ItemVO item = sqlSession.selectOne("itemMapper.selectItemOne", itemCode);
-//		item.setImageList(sqlSession.selectList("itemMapper.selectItemImages", itemCode));
-//		return item;
 		return sqlSession.selectOne("itemMapper.selectItemDetail", itemCode);
 	}
 
@@ -61,6 +54,26 @@ public class ItemServiceImpl implements ItemService {
 	@Override
 	public List<BuyItemVO> selectOrderInfo(String orderNum) {
 		return sqlSession.selectList("cartMapper.selectOrderInfo", orderNum);
+	}
+
+	@Override
+	public int countItem(String cateType) {
+		return sqlSession.selectOne("itemMapper.countItem", cateType);
+	}
+
+	@Override
+	public List<ItemVO> selectItemListPaging(PagingVO paging) {
+		return sqlSession.selectList("itemMapper.selectItemListPaging", paging);
+	}
+
+	@Override
+	public int countBuyItem(BuyItemVO buyItem) {
+		return sqlSession.selectOne("cartMapper.countBuyItem", buyItem);
+	}
+
+	@Override
+	public List<BuyItemVO> selectBuyItemListPaging(BuyItemVO buyItem) {
+		return sqlSession.selectList("cartMapper.selectBuyItemListPaging", buyItem);
 	}
 	
 }

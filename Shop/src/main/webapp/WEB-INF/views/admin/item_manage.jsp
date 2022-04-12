@@ -9,7 +9,7 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<div class="row row-cols-1 row-cols-md-4 g-4">
+	<div class="row row-cols-1 row-cols-md-5 g-4">
 		<c:forEach items="${itemList}" var="item">
 			<div class="col">
 				<div class="card h-100">

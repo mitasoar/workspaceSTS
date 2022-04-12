@@ -84,9 +84,44 @@
 		<result column="BUY_PRICE" property="buyPrice"/>
 		<result column="BUY_DATE" property="buyDate"/>
 		<result column="ORDER_NUM" property="orderNum"/>
+		<result column="RN" property="rn"/>
 		<association property="cart" resultMap="cart"/>
 		<association property="member" resultMap="memberMapper.member"/>
 	</resultMap>
+	
+	<select id="countBuyItem" resultType="int">
+		SELECT COUNT(DISTINCT BUY.ORDER_NUM) 
+		FROM SHOP_BUY BUY, SHOP_MEMBER MEM
+		WHERE BUY.MEM_ID = MEM.MEM_ID
+		<if test="orderNum != null and orderNum != ''">AND UPPER(BUY.ORDER_NUM) LIKE '%' ||  UPPER(#{orderNum}) || '%'</if>
+		<if test="beforeDate != null and beforeDate != ''">AND BUY.BUY_DATE &gt;= #{beforeDate}</if>
+		<if test="afterDate != null and afterDate != ''">AND BUY.BUY_DATE &lt; TO_DATE(#{afterDate}) + 1</if>
+		<if test="memId != null and memId != ''">AND (UPPER(MEM.MEM_ID) LIKE '%' ||  UPPER(#{memId}) || '%' OR UPPER(MEM.MEM_NAME) LIKE '%' ||  UPPER(#{memId}) || '%')</if>
+	</select>
+	
+	<select id="selectBuyItemListPaging" resultMap="buyItem">
+		SELECT * 
+		FROM (
+			SELECT ROWNUM RN, A.* 
+				FROM (
+						SELECT DISTINCT BUY.ORDER_NUM
+							, BUY.BUY_NUM
+						    , BUY.MEM_ID
+						    , BUY.BUY_DATE
+						    , MEM.MEM_NAME
+						FROM SHOP_MEMBER MEM, SHOP_BUY BUY LEFT OUTER JOIN SHOP_BUY BUY2
+                        ON BUY.ORDER_NUM = BUY2.ORDER_NUM AND BUY.BUY_NUM &lt; BUY2.BUY_NUM
+						WHERE BUY.MEM_ID = MEM.MEM_ID AND BUY2.BUY_NUM IS NULL
+						<if test="orderNum != null and orderNum != ''">AND UPPER(BUY.ORDER_NUM) LIKE '%' ||  UPPER(#{orderNum}) || '%'</if>
+						<if test="beforeDate != null and beforeDate != ''">AND BUY.BUY_DATE &gt;= #{beforeDate}</if>
+						<if test="afterDate != null and afterDate != ''">AND BUY.BUY_DATE &lt; TO_DATE(#{afterDate}) + 1</if>
+						<if test="memId != null and memId != ''">AND (UPPER(MEM.MEM_ID) LIKE '%' ||  UPPER(#{memId}) || '%' OR UPPER(MEM.MEM_NAME) LIKE '%' ||  UPPER(#{memId}) || '%')</if>
+						ORDER BY BUY.BUY_NUM DESC
+						) A
+				WHERE ROWNUM &lt;= #{paging.end}
+				)
+		WHERE RN &gt;= #{paging.start}
+	</select>
 	
 	<select id="selectBuyList" resultMap="buyItem">
 		SELECT DISTINCT BUY.ORDER_NUM
@@ -95,10 +130,10 @@
 		    , MEM.MEM_NAME
 		FROM SHOP_BUY BUY, SHOP_MEMBER MEM
 		WHERE BUY.MEM_ID = MEM.MEM_ID
-		<if test="orderNum != null and orderNum != ''">AND BUY.ORDER_NUM LIKE '%' ||  #{orderNum} || '%'</if>
+		<if test="orderNum != null and orderNum != ''">AND UPPER(BUY.ORDER_NUM) LIKE '%' ||  UPPER(#{orderNum}) || '%'</if>
 		<if test="beforeDate != null and beforeDate != ''">AND BUY.BUY_DATE &gt;= #{beforeDate}</if>
 		<if test="afterDate != null and afterDate != ''">AND BUY.BUY_DATE &lt; TO_DATE(#{afterDate}) + 1</if>
-		<if test="memId != null and memId != ''">AND (MEM.MEM_ID LIKE '%' ||  #{memId} || '%' OR MEM.MEM_NAME LIKE '%' ||  #{memId} || '%')</if>
+		<if test="memId != null and memId != ''">AND (UPPER(MEM.MEM_ID) LIKE '%' ||  UPPER(#{memId}) || '%' OR UPPER(MEM.MEM_NAME) LIKE '%' ||  UPPER(#{memId}) || '%')</if>
 		ORDER BY BUY_DATE DESC
 	</select>
 	

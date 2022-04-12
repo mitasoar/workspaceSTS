@@ -41,7 +41,7 @@
 }
 
 body {
-	font-family: 'KyoboHandwriting2020A';
+	font-family: 'HS-Regular';
 }
 
 .container {
@@ -51,6 +51,8 @@ body {
 .loginSpan {
 	display: block;
 	float: left;
+	margin-left: 3%;
+	font-size: 20px;
 }
 
 .mg-bt-20 {
@@ -111,6 +113,14 @@ body {
 
 .h-250 {
 	height: 250px;
+}
+
+.h-200 {
+	height: 200px;
+}
+
+.h-150 {
+	height: 150px;
 }
 
 .w-200 {

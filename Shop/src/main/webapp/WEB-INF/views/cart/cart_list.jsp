@@ -43,7 +43,7 @@
 						<td>${cart.item.itemName}</td>
 						<td><fmt:formatNumber type="currency" value="${cart.item.itemPrice}"/></td>
 						<td>
-							<input type="number" class="form-control d-inline w-50" id="itemCnt${cart.cartNum}" value="${cart.itemCnt}" min="1" onchange="changeCnt(this, ${status.count}, ${cart.item.itemPrice});">
+							<input type="number" class="form-control d-inline w-50" id="itemCnt${cart.cartNum}" value="${cart.itemCnt}" min="1" onchange="changeCnt(this, ${status.count}, ${cart.item.itemPrice}, ${cart.cartNum});">
 							<input type="hidden" id="beforeCnt${status.count}" value="${cart.itemCnt}">
 							<button type="button" class="form-control d-inline w-30" onclick="updateCart('${cart.cartNum}');">변경</button>
 						</td>

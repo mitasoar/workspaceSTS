@@ -23,6 +23,7 @@ import com.kh.shop.service.ItemService;
 import com.kh.shop.vo.BuyItemVO;
 import com.kh.shop.vo.ImageVO;
 import com.kh.shop.vo.ItemVO;
+import com.kh.shop.vo.PagingVO;
 
 
 @Controller
@@ -124,25 +125,52 @@ public class AdminController {
 	@GetMapping("/editItem")
 	public String editItem(Model model, HttpSession session) {
 		if (backHome(session)) return "redirect:/item/itemList";
-		model.addAttribute("itemList", itemService.selectItemList());
+		model.addAttribute("itemList", itemService.selectItemList(""));
 		return "admin/item_manage";
 	}
 	
+	/*
+	 * @GetMapping("/buyList") public String buyList(BuyItemVO buyItem, Model model,
+	 * HttpSession session) { if (backHome(session)) return
+	 * "redirect:/item/itemList";
+	 * 
+	 * String today = new
+	 * SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
+	 * 
+	 * if (buyItem.getBeforeDate() == null || buyItem.getBeforeDate().equals("")) {
+	 * buyItem.setBeforeDate(today.substring(0, today.length() - 2) + "01"); } if
+	 * (buyItem.getAfterDate() == null || buyItem.getAfterDate().equals("") ) {
+	 * buyItem.setAfterDate(today); }
+	 * 
+	 * model.addAttribute("buyItem", buyItem); model.addAttribute("buyList",
+	 * itemService.selectBuyList(buyItem));
+	 * 
+	 * return "admin/buy_list"; }
+	 */
+	
 	@GetMapping("/buyList")
-	public String buyList(BuyItemVO buyItem, Model model, HttpSession session) {
+	public String buyList(BuyItemVO buyItem, String nowPage, Model model, HttpSession session) {
 		if (backHome(session)) return "redirect:/item/itemList";
 		
 		String today = new SimpleDateFormat("yyyy-MM-dd").format(Calendar.getInstance().getTime());
 		
 		if (buyItem.getBeforeDate() == null || buyItem.getBeforeDate().equals("")) {
-			buyItem.setBeforeDate(today.substring(0, today.length() - 1) + "1");
+			buyItem.setBeforeDate(today.substring(0, today.length() - 2) + "01");
 		}
 		if (buyItem.getAfterDate() == null || buyItem.getAfterDate().equals("") ) {
 			buyItem.setAfterDate(today);
 		}
+
+		int total = itemService.countBuyItem(buyItem);
+		
+		if (nowPage == null) {
+			nowPage = "1";
+		}
+		
+		buyItem.setPaging(new PagingVO(total, Integer.parseInt(nowPage), 10));
 		
 		model.addAttribute("buyItem", buyItem);
-		model.addAttribute("buyList", itemService.selectBuyList(buyItem));
+		model.addAttribute("buyList", itemService.selectBuyItemListPaging(buyItem));
 		
 		return "admin/buy_list";
 	}
@@ -150,10 +178,8 @@ public class AdminController {
 	@GetMapping("/buyOrderInfo")
 	@ResponseBody
 	public List<BuyItemVO> buyOrderInfo(String orderNum) {
-		System.out.println("들어옴@@@@@@@@@@@@@@@@@@@@@@@@");
 		return itemService.selectOrderInfo(orderNum);
 	}
-	
 	
 	@GetMapping("/editCate")
 	public String editCate(HttpSession session) {
