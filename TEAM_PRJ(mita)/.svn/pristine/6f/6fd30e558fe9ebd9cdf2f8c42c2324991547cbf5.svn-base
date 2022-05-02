@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="memberMapper">
+
+	<resultMap type="com.kh.teamprj.vo.MemberVO" id="member">
+		<id column="MEM_NO" property="memNo"/>
+		<result column="MEM_PW" property="memPw"/>
+		<result column="MEM_NAME" property="memName"/>
+		<result column="MEM_EMAIL" property="memEmail"/>
+		<result column="MEM_ADDR" property="memAddr"/>
+		<result column="MEM_PHONE" property="memPhone"/>
+		<result column="MEM_IMAGE" property="memImage"/>
+		<result column="MEM_GENDER" property="memGender"/>
+		<result column="MEM_BIRTH" property="memBirth"/>
+		<result column="MEM_TYPE" property="memType"/>
+		<result column="IS_JOIN" property="isJoin"/>
+		<result column="CREATE_DATE" property="createDate"/>
+		<result column="WITHDRAW_DATE" property="withdrawDate"/>
+	</resultMap>
+	
+	<select id="selectMemberList" resultMap="member">
+		SELECT MEM_NO
+			, MEM_NAME
+		FROM MEMBER
+	</select>
+	
+	<select id="loginMember">
+		SELECT M.MEM_NO
+			, M.MEM_NAME
+			, M.MEM_TYPE
+		FROM MEMBER M LEFT OUTER JOIN STUDENT S
+		ON M.MEM_NO = S.MEM_NO
+		LEFT OUTER JOIN EMP E
+		ON M.MEM_NO = E.MEM_NO
+		WHERE (S.STU_NO = #{memId} OR E.EMP_NO = #{memId}) AND MEM_PW = #{memPw}
+	</select>
+	
+	<select id="selectEmailByMember" resultType="String" parameterType="String">
+		SELECT MEM_NO
+		FROM MEMBER
+		WHERE MEM_EMAIL = #{email}
+	</select>
+	
+	<select id="selectPhoneByMember" resultType="String" parameterType="String">
+		SELECT MEM_NO
+		FROM MEMBER
+		WHERE MEM_PHONE = #{phone}
+	</select>
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+

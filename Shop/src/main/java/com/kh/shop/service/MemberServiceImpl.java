@@ -36,4 +36,14 @@ public class MemberServiceImpl implements MemberService {
 		sqlSession.update("memberMapper.updateMember", member);
 	}
 
+	@Override
+	public String findEmail(String memId) {
+		return sqlSession.selectOne("memberMapper.findEmail", memId);
+	}
+
+	@Override
+	public void updatePw(MemberVO member) {
+		sqlSession.update("memberMapper.updatePw", member);
+	}
+
 }

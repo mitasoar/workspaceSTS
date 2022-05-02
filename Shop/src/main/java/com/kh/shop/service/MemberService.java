@@ -14,4 +14,10 @@ public interface MemberService {
 	
 	// 아이디 체크
 	boolean idCheck(String id);
+	
+	// 이메일 찾기
+	String findEmail(String memId);
+	
+	// 비밀번호 변경
+	void updatePw(MemberVO member);
 }

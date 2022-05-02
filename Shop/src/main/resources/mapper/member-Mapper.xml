@@ -30,6 +30,12 @@
 		WHERE MEM_ID = #{memId}
 	</select>
 	
+	<select id="findEmail" resultType="string">
+		SELECT MEM_EMAIL
+		FROM SHOP_MEMBER
+		WHERE MEM_ID = #{memId}
+	</select>
+	
 	<insert id="insertMember">
 		INSERT INTO SHOP_MEMBER (
 			MEM_ID
@@ -55,6 +61,12 @@
 			, MEM_PHONE = #{memPhone}
 			, MEM_Email = #{memEmail}
 			, MEM_ADDRESS = #{memAddress}
+		WHERE MEM_ID = #{memId}
+	</update>
+	
+	<update id="updatePw">
+		UPDATE SHOP_MEMBER
+		SET MEM_PW = #{memPw}
 		WHERE MEM_ID = #{memId}
 	</update>
 	

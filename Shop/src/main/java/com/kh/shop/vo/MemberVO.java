@@ -5,6 +5,16 @@ import java.util.Objects;
 public class MemberVO {
 	private String memId, memPw, memName, memPhone, memEmail, memAddress, isAdmin, joinDate;
 	
+	public MemberVO() {
+		super();
+	}
+
+	public MemberVO(String memId, String memPw) {
+		super();
+		this.memId = memId;
+		this.memPw = memPw;
+	}
+
 	public String getMemId() {
 		return memId;
 	}

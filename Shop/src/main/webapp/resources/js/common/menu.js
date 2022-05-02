@@ -110,6 +110,25 @@ joinPw2.addEventListener('keyup', function(event) {
 	}
 })
 
+
+// 회원가입 ajax
+function joinMember() {
+	$.ajax({
+		url: "/member/join",
+		type: "POST",
+		data: new FormData(document.querySelector('#joinForm')),
+		processData: false,
+		contentType: false,
+		success: function(data) {
+			if (data == 'ok') {
+				location.href = '/item/itemList';
+			} else {
+				alert("로그인 실패.. 아이디와 비밀번호를 다시 확인해주세요.");
+			}
+		},
+	})
+}
+
 // 아이디 체크
 let idCheck = false;
 const id = document.getElementById('inputId');

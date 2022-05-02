@@ -1,12 +1,17 @@
 package com.kh.shop.controller;
 
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +33,9 @@ import com.kh.shop.vo.MemberVO;
 public class MemberController {
 	@Resource(name="memberService")
 	private MemberService memberService;
+	
+	@Autowired
+	private JavaMailSender mailSender;
 	
 	@PostMapping("/edit")
 	@ResponseBody
@@ -77,5 +85,47 @@ public class MemberController {
 	public String login(HttpSession session) {
 		session.removeAttribute("login");
 		return "redirect:/item/itemList";
+	}
+	
+	@GetMapping("/findPw")
+	public String findPw() {
+		return "member/find_pw";
+	}
+	
+	@PostMapping("/findPw")
+	@ResponseBody
+	public void findPw(String memId) {
+		// 메일 정보 조회
+		String memEmail = memberService.findEmail(memId);
+		
+		// 임시 비밀번호 생성 소문자 + 대문자 + 숫자 포함 8자리
+		String temporaryPw = getTemporaryPw(8);
+		
+		memberService.updatePw(new MemberVO(memId, temporaryPw));
+		
+		try {
+			// 메일 보내기
+			MimeMessage message = mailSender.createMimeMessage();
+			MimeMessageHelper msgHelper = new MimeMessageHelper(message, true, "UTF-8");
+			msgHelper.setFrom("운영자 <mitasoar@gmail.com>"); // 메일 발신 계정
+			msgHelper.setTo(memEmail); // 메일 수신 계정
+			msgHelper.setSubject(memId + "님이 요청하신 임시비밀번호 메일입니다."); // 메일 제목
+			msgHelper.setText(memId + "님의 임시비밀번호는 '" + temporaryPw + "' 입니다."); // 메일 내용
+
+			mailSender.send(message); // 메일 발송
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public String getTemporaryPw(int num) {
+		String str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+		StringBuilder returnPw = new StringBuilder();
+		
+		for (int i = 0; i < num; i++) {
+			returnPw.append(str.charAt(new SecureRandom().nextInt(str.length())));
+		}
+		
+		return returnPw.toString();
 	}
 }

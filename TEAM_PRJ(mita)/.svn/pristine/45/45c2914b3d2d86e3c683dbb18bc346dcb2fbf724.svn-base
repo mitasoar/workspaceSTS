@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="memberMapper">
+
+	<resultMap type="com.kh.teamprj.vo.MemberVO" id="member">
+		<id column="MEM_NO" property="memNo"/>
+		<result column="MEM_PW" property="memPw"/>
+		<result column="MEM_NAME" property="memName"/>
+		<result column="MEM_EMAIL" property="memEmail"/>
+		<result column="MEM_ADDR" property="memAddr"/>
+		<result column="MEM_PHONE" property="memPhone"/>
+		<result column="MEM_IMAGE" property="memImage"/>
+		<result column="MEM_GENDER" property="memGender"/>
+		<result column="MEM_BIRTH" property="memBirth"/>
+		<result column="MEM_TYPE" property="memType"/>
+		<result column="IS_JOIN" property="isJoin"/>
+		<result column="CREATE_DATE" property="createDate"/>
+		<result column="WITHDRAW_DATE" property="withdrawDate"/>
+	</resultMap>
+	
+	<select id="loginMember" resultMap="member">
+		SELECT M.MEM_NO
+			, M.MEM_NAME
+			, M.MEM_TYPE
+		FROM MEMBER M LEFT OUTER JOIN STUDENT S
+		ON M.MEM_NO = S.MEM_NO
+		LEFT OUTER JOIN EMP E
+		ON M.MEM_NO = E.MEM_NO
+		WHERE (M.MEM_NO = UPPER(#{memId}) OR S.STU_NO = UPPER(#{memId}) OR E.EMP_NO = UPPER(#{memId})) AND MEM_PW = #{memPw}
+	</select>
+	
+	<select id="selectEmailByMember" resultType="String" parameterType="String">
+		SELECT MEM_NO
+		FROM MEMBER
+		WHERE MEM_EMAIL = #{email}
+	</select>
+	
+	<select id="selectPhoneByMember" resultType="String" parameterType="String">
+		SELECT MEM_NO
+		FROM MEMBER
+		WHERE MEM_PHONE = #{phone}
+	</select>
+	
+	<insert id="insertMember">
+		INSERT ALL
+		INTO MEMBER (MEM_NO
+					, MEM_PW
+					, MEM_NAME
+					, MEM_EMAIL
+					, MEM_ADDR
+					, MEM_PHONE
+					, MEM_IMAGE
+					, MEM_GENDER
+					, MEM_BIRTH
+					, MEM_TYPE)
+		VALUES ((SELECT 'MEM_' || TO_CHAR(NVL(MAX(TO_NUMBER(SUBSTR(MEM_NO, 5))), 0) + 1) FROM MEMBER)
+				, #{memPw}
+				, #{memName}
+				, #{memEmail}
+				, #{memAddr}
+				, #{memPhone}
+				, #{memImage}
+				, #{memGender}
+				, #{memBirth}
+				, #{memType}
+		)
+		<if test="memType.equals('stu')"> <!-- 학생 등록인 경우 -->
+		INTO STUDENT (STU_NO, MEM_NO)
+		VALUES ((SELECT 'STU_' || TO_CHAR(NVL(MAX(TO_NUMBER(SUBSTR(STU_NO, 5))), 0) + 1) FROM STUDENT)
+			, (SELECT 'MEM_' || TO_CHAR(NVL(MAX(TO_NUMBER(SUBSTR(MEM_NO, 5))), 0) + 1) FROM MEMBER))
+		</if>
+		<if test="memType.equals('emp')"> <!-- 직원 등록인 경우 -->
+		INTO EMP (EMP_NO, MEM_NO)
+		VALUES ((SELECT 'EMP_' || TO_CHAR(NVL(MAX(TO_NUMBER(SUBSTR(EMP_NO, 5))), 0) + 1) FROM EMP)
+			, (SELECT 'MEM_' || TO_CHAR(NVL(MAX(TO_NUMBER(SUBSTR(MEM_NO, 5))), 0) + 1) FROM MEMBER))
+		</if>
+		SELECT * FROM SYS.DUAL
+	</insert>
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+

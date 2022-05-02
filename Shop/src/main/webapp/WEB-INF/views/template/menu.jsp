@@ -14,7 +14,8 @@
 			<c:choose>
 				<c:when test="${empty login}">
 					<button type="button" class="btn btn-warning bg-gradient" data-bs-toggle="modal" data-bs-target="#loginModal">로그인</button> 
-					<button type="button" class="btn btn-warning bg-gradient" data-bs-toggle="modal" data-bs-target="#joinModal">회원가입</button> 
+					<button type="button" class="btn btn-warning bg-gradient" data-bs-toggle="modal" data-bs-target="#joinModal">회원가입</button>
+					<!-- <button type="button" class="btn btn-warning bg-gradient" onclick="location.href='/member/findPw'">비밀번호찾기</button> -->  
 				</c:when>
 				<c:otherwise>
 					<span class="loginSpan">${login.memName}님 반갑습니다 ^_^</span>
@@ -90,7 +91,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form class="row g-3" action="/member/join" method="post">
+        <form class="row g-3" action="/member/join" method="post" id="joinForm">
 		  <div class="col-9">
 		    <label for="inputId" class="form-label">아이디</label>
 		    <input type="text" class="form-control" id="inputId" name="memId" maxlength="15" required>
@@ -143,7 +144,7 @@
 		  </div>
 		  <div class="col-12 text-end">
 		  	<button type="button" class="btn btn-dark" data-bs-dismiss="modal">취소</button>
-		    <button type="submit" class="btn btn-dark">회원가입</button>
+		    <button type="button" class="btn btn-dark" onclick="joinMember();">회원가입</button>
 		  </div>
 		</form>
       </div>

@@ -1,0 +1,20 @@
+function login() {
+	$.ajax({
+		url: "/member/login",
+		type: "POST",
+		data: new FormData(document.querySelector('#loginForm')),
+		dataType: "text",
+		processData: false,
+		contentType: false,
+		success: function(data) {
+			if (data == 'ok') {
+				alert('로그인 되었습니다.');
+				location.href = '/member/home';
+			} else {
+				alert('로그인이 실패하였습니다.. 다시 확인해주세요.');
+			}
+		}
+	})
+	
+	return false;
+}

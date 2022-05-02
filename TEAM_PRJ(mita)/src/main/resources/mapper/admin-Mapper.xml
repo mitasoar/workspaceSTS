@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="adminMapper">
+	<!-- 임시 배도훈VO = 학생VO -->
+	<resultMap type="com.kh.teamprj.vo.BaedohunVO1" id="student">
+		<id column="STU_NO" property="stuNo"/>
+		<result column="COLL_NO" property="collNo"/>
+		<result column="MAJOR_CODE" property="majorCode"/>
+		<result column="MINOR_CODE" property="minorCode"/>
+		<result column="STU_YEAR" property="stuYear"/>
+		<result column="STU_SEM" property="stuSem"/>
+		<result column="STU_STATUS" property="stuStatus"/>
+		<result column="MEM_NO" property="memNo"/>
+	</resultMap>
+	
+	<select id="selectStudentList" resultMap="student">
+		SELECT STU_NO
+			, COLL_NO
+			, MAJOR_CODE
+			, MINOR_CODE
+			, STU_YEAR
+		    , STU_SEM
+		    , STU_STATUS
+		    , MEM_NO
+		FROM STUDENT
+		ORDER BY STU_NO DESC
+	</select>
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
