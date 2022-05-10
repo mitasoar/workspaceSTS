@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="memberMapper">
+	<!-- MemberVO -->
+	<resultMap type="com.kh.teamprj.vo.MemberVO" id="member">
+		<id column="MEM_NO" property="memNo"/>
+		<result column="MEM_PW" property="memPw"/>
+		<result column="MEM_NAME" property="memName"/>
+		<result column="MEM_EMAIL" property="memEmail"/>
+		<result column="MEM_ADDR" property="memAddr"/>
+		<result column="MEM_PHONE" property="memPhone"/>
+		<result column="MEM_IMAGE" property="memImage"/>
+		<result column="MEM_GENDER" property="memGender"/>
+		<result column="MEM_BIRTH" property="memBirth"/>
+		<result column="MEM_TYPE" property="memType"/>
+		<result column="IS_JOIN" property="isJoin"/>
+		<result column="CREATE_DATE" property="createDate"/>
+		<result column="WITHDRAW_DATE" property="withdrawDate"/>
+	</resultMap>
+	
+	<!-- 회원 조회 -->
+	<select id="selectMemberList" resultMap="member" parameterType="String">
+		SELECT MEM_NO
+			, MEM_NAME
+		FROM MEMBER
+		<if test="_parameter != null and _parameter != ''">
+		WHERE UPPER(MEM_NAME) LIKE UPPER('%' ||  #{name} || '%')
+		</if>
+		<if test="_parameter == null or _parameter == ''">
+		WHERE MEM_NAME IS NULL
+		</if>
+	</select>
+	
+	<!-- 로그인 -->
+	<select id="loginMember" resultMap="member" parameterType="String">
+		SELECT M.MEM_NO
+			, M.MEM_PW
+			, M.MEM_NAME
+			, M.MEM_TYPE
+		FROM MEMBER M LEFT OUTER JOIN STUDENT S
+		ON M.MEM_NO = S.MEM_NO
+		LEFT OUTER JOIN EMP E
+		ON M.MEM_NO = E.MEM_NO
+		WHERE (M.MEM_NO = UPPER(#{memId}) OR S.STU_NO = UPPER(#{memId}) OR E.EMP_NO = UPPER(#{memId}))
+	</select>
+	
+	<!-- 이메일 확인 -->
+	<select id="selectEmailByMember" resultType="map" parameterType="String">
+		SELECT M.MEM_NO
+			, S.STU_NO
+			, E.EMP_NO
+		FROM MEMBER M LEFT OUTER JOIN STUDENT S
+		ON M.MEM_NO = S.MEM_NO
+		LEFT OUTER JOIN EMP E
+		ON M.MEM_NO = E.MEM_NO
+		WHERE M.MEM_EMAIL = #{email}
+	</select>
+	
+	<!-- 연락처 확인 -->
+	<select id="selectPhoneByMember" resultType="map" parameterType="String">
+		SELECT M.MEM_NO
+			, S.STU_NO
+			, E.EMP_NO
+		FROM MEMBER M LEFT OUTER JOIN STUDENT S
+		ON M.MEM_NO = S.MEM_NO
+		LEFT OUTER JOIN EMP E
+		ON M.MEM_NO = E.MEM_NO
+		WHERE M.MEM_PHONE = #{phone}
+	</select>
+	
+	<!-- 회원가입 후 발급되는 아이디 -->
+	<select id="selectJoinMember" resultType="map">
+		SELECT M.MEM_NO
+			, S.STU_NO
+			, E.EMP_NO
+		FROM MEMBER M LEFT OUTER JOIN STUDENT S
+		ON M.MEM_NO = S.MEM_NO
+		LEFT OUTER JOIN EMP E
+		ON M.MEM_NO = E.MEM_NO
+		WHERE M.MEM_NO = (SELECT 'MEM_' || MAX(TO_NUMBER(SUBSTR(MEM_NO, 5))) FROM MEMBER)
+	</select>
+	
+	<!-- 회원 정보 -->
+	<select id="selectMemberOne" resultMap="member" parameterType="String">
+		SELECT MEM_NO
+			, MEM_NAME
+			, MEM_EMAIL
+			, MEM_ADDR
+			, MEM_PHONE
+			, MEM_IMAGE
+			, MEM_GENDER
+			, TO_CHAR(MEM_BIRTH, 'YYYY-MM-DD') AS MEM_BIRTH
+			, MEM_TYPE
+		FROM MEMBER
+		WHERE MEM_NO = #{memNo}
+	</select>
+	
+	<!-- 회원 비밀번호 -->
+	<select id="selectMemberPw" resultType="String" parameterType="String">
+		SELECT MEM_PW
+		FROM MEMBER
+		WHERE MEM_NO = #{memNo}
+	</select>
+	
+	<!-- 비밀번호 변경 -->
+	<update id="updateMemberPw">
+		UPDATE MEMBER
+		SET MEM_PW = #{memPw}
+		WHERE MEM_NO = #{memNo}
+	</update>
+	
+	<!-- 회원 정보 수정 -->
+	<update id="updateMember">
+		UPDATE MEMBER
+		SET  MEM_EMAIL = #{memEmail}
+			, MEM_ADDR = #{memAddr}
+			, MEM_PHONE = #{memPhone}
+			, MEM_IMAGE = #{memImage}
+			, MEM_GENDER = #{memGender}
+			, MEM_BIRTH = #{memBirth}
+		WHERE MEM_NO = #{memNo}
+	</update>
+	
+	<!-- 회원 탈퇴 -->
+	<update id="deleteMember" parameterType="String">
+		UPDATE MEMBER
+		SET IS_JOIN = 'N'
+			WITHDRAW_DATE = SYSDATE
+		WHERE MEM_NO = #{memNo}
+	</update>
+	
+	<!-- 회원 가입 -->
+	<insert id="insertMember">
+		INSERT ALL
+		INTO MEMBER (MEM_NO
+					, MEM_PW
+					, MEM_NAME
+					, MEM_EMAIL
+					, MEM_ADDR
+					, MEM_PHONE
+					, MEM_IMAGE
+					, MEM_GENDER
+					, MEM_BIRTH
+					, MEM_TYPE)
+		VALUES ((SELECT 'MEM_' || TO_CHAR(NVL(MAX(TO_NUMBER(SUBSTR(MEM_NO, 5))), 0) + 1) FROM MEMBER)
+				, #{memPw}
+				, #{memName}
+				, #{memEmail}
+				, #{memAddr}
+				, #{memPhone}
+				, #{memImage}
+				, #{memGender}
+				, #{memBirth}
+				, #{memType}
+		)
+		<if test="memType.equals('stu')"> <!-- 학생 등록인 경우 -->
+		INTO STUDENT (STU_NO, MEM_NO)
+		VALUES ((SELECT 'STU_' || TO_CHAR(NVL(MAX(TO_NUMBER(SUBSTR(STU_NO, 5))), 0) + 1) FROM STUDENT)
+			, (SELECT 'MEM_' || TO_CHAR(NVL(MAX(TO_NUMBER(SUBSTR(MEM_NO, 5))), 0) + 1) FROM MEMBER))
+		</if>
+		<if test="memType.equals('emp')"> <!-- 직원 등록인 경우 -->
+		INTO EMP (EMP_NO, MEM_NO)
+		VALUES ((SELECT 'EMP_' || TO_CHAR(NVL(MAX(TO_NUMBER(SUBSTR(EMP_NO, 5))), 0) + 1) FROM EMP)
+			, (SELECT 'MEM_' || TO_CHAR(NVL(MAX(TO_NUMBER(SUBSTR(MEM_NO, 5))), 0) + 1) FROM MEMBER))
+		</if>
+		SELECT * FROM SYS.DUAL
+	</insert>
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+

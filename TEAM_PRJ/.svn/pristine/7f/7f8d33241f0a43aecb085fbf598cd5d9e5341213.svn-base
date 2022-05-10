@@ -1,0 +1,289 @@
+package com.kh.teamprj.controller;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.kh.teamprj.service.ProfessorService;
+import com.kh.teamprj.util.MyDateUtil;
+import com.kh.teamprj.util.ScheduleColor;
+import com.kh.teamprj.vo.AcademicAppVO;
+import com.kh.teamprj.vo.DeptVO;
+import com.kh.teamprj.vo.EmpVO;
+import com.kh.teamprj.vo.EmploymenteVO;
+import com.kh.teamprj.vo.LecVO;
+import com.kh.teamprj.vo.MemberVO;
+import com.kh.teamprj.vo.SemesterVO;
+import com.kh.teamprj.vo.StudentVO;
+import com.kh.teamprj.vo.TimeVO;
+
+import com.kh.teamprj.vo.GradeVO;
+
+
+@Controller
+@RequestMapping("/pro")
+public class ProfessorController {
+	@Resource(name = "professorService")
+	private ProfessorService professorService;
+
+	// home으로(임시)
+	@GetMapping("/home")
+	public String home() {
+		return "professor/home";
+	}
+
+	// 강의 등록 페이지로 이동
+	@GetMapping("/regLecForm")
+	public String regLecForm(Model model, SemesterVO semVO) {
+		int[] sem = MyDateUtil.getSemDate();
+		semVO.setYear(sem[0]);
+		semVO.setSemester(sem[1]);
+		
+		// 단과대 리스트
+		model.addAttribute("collList", professorService.selectCollege());
+
+		// 학기 정보
+		model.addAttribute("sem", professorService.selectSem(semVO));
+		
+		//System.out.println(professorService.selectSemYn(semVO));
+		return "professor/reg_lec";
+	}
+
+	// 단과대 선택에 따라 학과 선택창이 나오도록
+	@ResponseBody
+	@PostMapping("/selectDept")
+	public List<DeptVO> selectDept(DeptVO deptVO) {
+		List<DeptVO> list = professorService.selectDeptList(deptVO);
+
+		return list;
+	}
+
+	//강의 등록
+	@PostMapping("/regLec")
+	public String regLec(LecVO lecVO, HttpSession session, String semNo) {
+		String uri = "professor/home";
+		
+		// 강의 교수 이름가져와 세팅
+		MemberVO member = (MemberVO)session.getAttribute("loginInfo");
+		lecVO.setEmpNo(professorService.selectEmpInfo(member.getMemNo()).getEmpNo());
+		
+		System.out.println(lecVO.getEmpNo());
+		
+		//시간 중복 체크
+		boolean result = professorService.selectLecTimeChk(lecVO);
+		
+		if(result) {
+			uri = "professor/alert";
+		}
+		// lecVO 정보로 lec를 등록한다
+		professorService.insertLec(lecVO);
+
+		return uri;
+	}
+	
+	//폐강
+	@ResponseBody
+	@PostMapping("/lecClose")
+	public void lecClose(String lecNo) {
+		professorService.updateLecClose(lecNo);
+		
+	}
+
+	//강의 리스트
+	@GetMapping("/lecList")
+	public String lecList(Model model, LecVO lecVO, HttpSession session) {
+		// 교수 정보
+		MemberVO member = (MemberVO)session.getAttribute("loginInfo");
+		EmpVO empVO = professorService.selectEmpInfo(member.getMemNo());
+		lecVO.setEmpNo(empVO.getEmpNo());
+		System.out.println(empVO.getEmpNo());
+		System.out.println(empVO.getMemberVO().getMemName());
+		
+		// 단과대 리스트
+		model.addAttribute("collList", professorService.selectCollege());
+		
+		// 강의 리스트
+		model.addAttribute("lecList", professorService.selectLecList(lecVO));
+
+		return "professor/lec_list";
+	}
+	
+	//강의 검색
+	@ResponseBody
+	@PostMapping("searchLecList")
+	public List<LecVO> searchLecList(LecVO lecVO) {
+		
+		return professorService.selectLecList(lecVO);
+	}
+
+
+	// 강의를 듣고있는 학생
+	@ResponseBody
+	@PostMapping("/lecStuList")
+	public List<StudentVO> lecStuList(StudentVO studentVO) {
+
+		return professorService.selectLecStu(studentVO);
+	}
+
+	//성적 등록
+	@ResponseBody
+	@PostMapping("/regGrade")
+	public List<StudentVO> regScore(StudentVO studentVO, GradeVO gradeVO) {
+		/*
+		 * List<GradeVO> gradeList = new ArrayList<GradeVO>(); gradeList.add(gradeVO);
+		 * studentVO.setGradeList(gradeList);
+		 */
+
+		// 성적 등록
+		professorService.updateGrade(gradeVO);
+
+		return professorService.selectLecStu(studentVO);
+	}
+
+
+	// 교수 시간표
+	@GetMapping("/schedule")
+	public String schedule(Model model) {
+
+		return "professor/schedule";
+	}
+	
+	//교수시간표 ajax
+	@ResponseBody
+	@PostMapping("/lecSchedule")
+	public List<TimeVO> lecSchedule(ScheduleColor color, HttpSession session) {
+		MemberVO member = (MemberVO)session.getAttribute("loginInfo");
+		String empNo = professorService.selectEmpInfo(member.getMemNo()).getEmpNo();
+		
+		List<TimeVO> list = professorService.selectLecTime(empNo);
+		String[] colorArr = color.getScheduleColor();
+
+		for (int i = 0; i < list.size(); i++) {
+			list.get(i).setColor(colorArr[i]);
+		}
+
+		for (int i = 0; i < list.size(); i++) {
+			int num1 = -1;
+			int num2 = -1;
+			for (int j = 0; j < list.size(); j++) {
+				if (list.get(i).getLecNo().equals(list.get(j).getLecNo())) {
+					num1 = i;
+					num2 = j;
+				}
+			}
+			if (num1 != -1 && num2 != -1 && num1 != num2) {
+				list.get(num1).setColor(colorArr[num1]);
+				list.get(num2).setColor(colorArr[num1]);
+			}
+
+		}
+
+		return list;
+	}
+
+	// 학적변동 승인으로 이동
+	@GetMapping("/academicApp")
+	public String academicApp(Model model, HttpSession session) {
+		MemberVO member = (MemberVO)session.getAttribute("loginInfo");
+		String empNo = professorService.selectEmpInfo(member.getMemNo()).getEmpNo();
+		
+		model.addAttribute("appList", professorService.selectAppList(empNo));
+
+		return "professor/academic_app";
+	}
+
+	// 학적 변동 승인
+	@PostMapping("/updateApp")
+	public String updateApp(AcademicAppVO appVO, Model model) {
+		// 오늘 날짜를 세팅
+		appVO.setProfProcessDate(MyDateUtil.getNowDateToString());
+		professorService.updateApp(appVO);
+		
+		return "redirect:pro/academicApp";
+	}
+	
+	//일괄 승인
+	@ResponseBody
+	@PostMapping("/updateApps")
+	public void updateApps(@RequestParam(value = "objArr[]") ArrayList<String> objArr, AcademicAppVO appVO) {
+		
+		for(String e : objArr) {
+			appVO.setAppNo(e);
+			appVO.setProfProcessDate(MyDateUtil.getNowDateToString());
+			professorService.updateApp(appVO);
+		}
+		
+	}
+	
+	//차트
+	@GetMapping("/chart")
+	public String chart() {
+		
+		return "professor/chart";
+	}
+	
+	@ResponseBody
+	@PostMapping("/chartAll")
+	public List<Double> selectStatus(){
+		List<Double> list = professorService.selectStatus();
+		
+		double totalNum = 0.0;
+		
+		List<Double> numList = new ArrayList<Double>();
+		
+		for(double e : list) {
+			totalNum += e;
+		}
+		for(double e : list) {
+			double num1 = (e / totalNum) * 100;
+			String numStr = String.format("%.2f", num1);
+			double num2 = Double.parseDouble(numStr);
+			System.out.println(num2);
+			numList.add(num2);
+		}
+		
+		return numList;
+	}
+	
+	@ResponseBody
+	@PostMapping("/selectLecNum")
+	public double[] selectLecNum(){
+		double[] numArr = new double[5];
+		int j = 0;
+		
+		for(int i = 2018 ; i <= 2022 ; i++) {
+			List<EmploymenteVO> list = professorService.selectLecNum(i);
+			double num = list.get(0).getNum() + list.get(1).getNum();
+			
+			double result = (list.get(1).getNum() / num) * 100;
+			String numStr = String.format("%.2f", result);
+			double result2 = Double.parseDouble(numStr);
+			System.out.println(result2);
+			numArr[j++] = result2;
+		}
+		
+		return numArr;
+	}
+	
+	//전과 복수전공 페이지로 이동
+	@GetMapping("/deptAppForm")
+	public String deptAppForm(HttpSession session) {
+		MemberVO member = (MemberVO)session.getAttribute("loginInfo");
+		EmpVO empVO = professorService.selectEmpInfo(member.getMemNo());
+		
+		
+		return "professor/dept_app";
+	}
+	
+}
+

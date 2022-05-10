@@ -1,0 +1,21 @@
+function approve(appNo, applyType, stuNo){
+	if(applyType != 복학){
+		applyType = '휴학';
+	}
+	
+	if(confirm(applyType + '신청을 승인하시겠습니까?')){
+		$.ajax({
+			url: '/admin/approveApply', 
+			type: 'post',
+			data: {'appNo': appNo,
+					'applyType': applyType,
+					'stuNo': stuNo},
+			success: function() {
+				alert('성공');
+			},
+			error: function() {
+				alert('실패');
+			}
+		});
+	}
+}

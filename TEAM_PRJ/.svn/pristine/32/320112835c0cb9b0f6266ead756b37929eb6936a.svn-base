@@ -1,0 +1,152 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+학적변동 내역
+<div class="" id="">
+	<!-- 학적관리 테이블을 학생번호로 조회 -->
+	<table class="table">
+		<colgroup>
+			<col width="5%">
+			<col width="5%">
+			<col width="5%">
+			<col width="15%">
+			<col width="15%">
+			<col width="10%">
+			<col width="15%">
+			<col width="10%">
+			<col width="15%">
+			<col width="5%">
+		</colgroup>
+		<tr align="center">
+			<td>순번</td>
+			<td>연도</td>
+			<td>학기</td>
+			<td>학적변동내용</td>
+			<td>신청일자</td>
+			<td>담당교수승인</td>
+			<td>교수승인일자</td>
+			<td>최종승인</td>
+			<td>학적변동일시</td>
+			<td>취소</td>
+		</tr>
+		<tbody id="listTbody">
+		 	<c:choose>
+				<c:when test="${empty applyList}">
+					<tr>
+						<td colspan="10" align="center">학적변동 내역이 존재하지 않습니다.</td>
+					</tr>
+				</c:when>
+				<c:otherwise>
+					<c:forEach items="${applyList }" var="apply" varStatus="status">
+						<tr align="center">
+							<td>${fn:length(applyList) - status.index }</td>
+							<td>${apply.semesterVO.year }</td>
+							<td>${apply.semesterVO.semester }</td>
+							<td>${apply.applyType }</td>
+							<td>${apply.applyDate }</td>
+							<td>${apply.profProcessStatus }</td>
+							<c:choose>
+								<c:when test="${empty apply.profProcessDate }">
+									<td>-</td>
+								</c:when>
+								<c:otherwise>
+									<td>${apply.profProcessDate }</td>
+								</c:otherwise>
+							</c:choose>
+							<td><b>${apply.adminProcessStatus }</b></td>
+							<c:choose>
+								<c:when test="${empty apply.adminProcessDate }">
+									<td>-</td>
+								</c:when>
+								<c:otherwise>
+									<td>${apply.adminProcessDate }</td>
+								</c:otherwise>
+							</c:choose>
+							<td>
+								<c:choose>
+									<%-- 최종미승인 시 취소 가능 --%>
+									<c:when test="${apply.adminProcessStatus eq '미승인' }">
+										<input type="button" onclick="deleteAcademicAppAjax('${apply.appNo}', '${apply.stuNo }');" value="취소" class="btn btn-secondary btn-sm">
+									</c:when>
+									<%-- 최종승인 시 취소 불가능(비활성화 버튼) --%>
+									<c:otherwise>
+										<button type="button" class="btn btn-secondary btn-sm" disabled>불가</button>
+									</c:otherwise>
+								</c:choose>
+							</td>
+						</tr>
+					</c:forEach>
+				</c:otherwise>
+			</c:choose>
+		</tbody>
+	</table>
+</div>
+휴/복학 신청
+<div>
+	<form action="/stu/academicApp" method="post" id="formTag">
+		<table class="table">
+			<colgroup>
+				<col width="15%">
+				<col width="40%">
+				<col width="15%">
+				<col width="30%">
+			</colgroup>
+			<tr>
+				<td align="center">신청내용</td>
+				<td>
+					<c:choose>
+						<c:when test="${sessionScope.loginInfo.stuStatus ne '제적'}">
+							<div class="row">
+								<div class="col-5" id="categoryDiv">
+									<select class="form-select" onchange="typeChange();" id="category">
+										<option value="신청유형">신청유형</option>
+										<option value="휴학">휴학</option>
+										<option value="복학">복학</option>
+									</select>
+								</div>
+								<div class="col-7" id="subCategoryDiv">
+									<select class="form-select" name="applyType" id="applyType">
+										<option value="">신청유형을 선택하세요</option>
+									</select>
+								</div>
+							</div>
+						</c:when>
+						<c:otherwise>
+							<div>현재 제적상태입니다.</div>
+						</c:otherwise>
+					</c:choose>
+				</td>
+				<td align="center">휴학기간</td>
+				<td>
+					<div class="row">
+						<div class="col-4">
+							<input type="number" class="form-control" id="applyDate" value="1" min="1" max="3" onchange="">
+						</div>
+						<div class="col-4">학기</div>				
+					</div>
+				</td>
+			</tr>
+		</table>
+		<!-- 신청에 필요한 stuNo -->
+		<input type="hidden" name="stuNo" id="stuNo" value="${sessionScope.loginInfo.stuNo }">
+		<!-- 유효성 검사에 필요한 appNo -->
+		<div id="lastAppNoDiv">
+			<input type="hidden" name="lastAppNo" id="lastAppNo" value="${applyList[0].appNo }">
+		</div>
+		<div align="right" id="btnDiv">
+			<input type="button" class="btn btn-primary" value="신청" onclick="apply();">
+		</div>
+	</form>
+</div>
+<div><input type="hidden" id="stuStatusHidden" value="${sessionScope.loginInfo.stuStatus }"></input></div>
+<script type="text/javascript" src="/resources/js/stu/academic.js?ver=100"></script>
+</body>
+</html>

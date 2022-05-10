@@ -1,0 +1,88 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<c:if test="${empty board}">
+	<title>게시판 글쓰기 화면</title>
+</c:if>
+<c:if test="${not empty board}">
+	<title>게시판 글수정 화면</title>
+</c:if>
+</head>
+<body>
+	<c:if test="${empty board}">
+		<form action="#" id="boardForm" onsubmit="return writeBoard();">
+			<select class="form-select mt-4 mb-2" name="cateNo" aria-label="Default select example">
+				<c:forEach items="${categoryList}" var="category">
+					<option value="${category.cateNo}">${category.cateName}</option>
+				</c:forEach>
+			</select>
+			<input type="text" name="boardTitle" class="form-control mb-2" placeholder="제목을 입력해주세요." autocomplete="none" required>
+			<div class="form-group mb-2">
+				<textarea class="form-control" rows="10" name="boardContent" placeholder="내용을 입력해주세요" required></textarea>
+			</div>
+			<div class="form-group" id="file-list">
+		        <a href="#this" onclick="addFile();">파일추가</a>
+		        <div class="file-group">
+		            <input class="form-control d-inline-block w-75 me-2" type="file" name="files"><a href='#this' name='file-delete'>삭제</a>
+		        </div>
+		    </div>
+			<div class="col-12 mb-2">
+				<div class="form-check form-switch">
+				  <input class="form-check-input" type="checkbox" role="switch" onchange="changeNotice(this);" id="isNotice" name="isNotice" value="Y">
+				  <label class="form-check-label" for="isNotice">공지사항</label>
+				</div>
+				<div class="form-check form-switch">
+				  <input class="form-check-input" type="checkbox" role="switch" id="isSecret" name="isSecret" value="Y">
+				  <label class="form-check-label" for="isSecret">비밀글</label>
+				</div>
+			</div>
+			<div class="col-12 text-center mb-4">
+				<button type="submit" class="btn btn-secondary mb-3" id="writeForm">글쓰기</button>
+			</div>
+		</form>
+	<script type="text/javascript" src="/resources/js/board/write.js"></script>
+	</c:if>
+	<c:if test="${not empty board}">
+		<form action="#" id="editForm" onsubmit="return editBoard('${board.boardNo}');">
+			<select class="form-select mt-4 mb-2" name="cateNo" aria-label="Default select example">
+				<c:forEach items="${categoryList}" var="category">
+					<option value="${category.cateNo}" <c:if test="${category.cateNo eq board.cateNo}">selected</c:if>>${category.cateName}</option>
+				</c:forEach>
+			</select>
+			<input type="hidden" name="boardNo" value="${board.boardNo}">
+			<input type="text" name="boardTitle" class="form-control mb-2" placeholder="제목을 입력해주세요." autocomplete="none" value="${board.boardTitle}" required>
+			<div class="form-group mb-2">
+				<textarea class="form-control" rows="10" name="boardContent" placeholder="내용을 입력해주세요" required>${board.boardContent}</textarea>
+			</div>
+			<div class="form-group" id="file-list">
+		        <a href="#this" onclick="addFile();">파일추가</a>
+		         <c:forEach items="${board.fileInfos}" var="file">
+		            <div class="file-input">
+		                <span class="glyphicon glyphicon-camera" aria-hidden="true">${file.originFile}</span>
+		                <input type="hidden" name="fileList" value="${file.fileNo}">
+		                <a href='#this' name='file-delete'>삭제</a>
+		            </div>
+		        </c:forEach>
+		    </div>
+			<div class="col-12 mb-2">
+				<div class="form-check form-switch">
+				  <input class="form-check-input" type="checkbox" role="switch" id="isNotice" name="isNotice" value="Y" <c:if test="${board.isNotice eq 'Y'}">checked</c:if>>
+				  <label class="form-check-label" for="isNotice">공지사항</label>
+				</div>
+				<div class="form-check form-switch">
+				  <input class="form-check-input" type="checkbox" role="switch" id="isSecret" name="isSecret" value="Y" <c:if test="${board.isSecret eq 'Y'}">checked</c:if>>
+				  <label class="form-check-label" for="isSecret">비밀글</label>
+				</div>
+			</div>
+			<div class="col-12 text-center mb-4">
+				<button type="submit" class="btn btn-secondary mb-3">글수정</button>
+			</div>
+		</form>
+	<script type="text/javascript" src="/resources/js/board/edit.js"></script>
+	</c:if>
+</body>
+</html>

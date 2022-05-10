@@ -1,0 +1,18 @@
+@font-face {
+    font-family: 'GowunDodum-Regular';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/GowunDodum-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+	font-family: 'GowunDodum-Regular';
+}
+
+.min-vh-80 {
+    min-height: 80vh;
+}
+
+a:hover {
+	color: #AAAAAA !important;
+}

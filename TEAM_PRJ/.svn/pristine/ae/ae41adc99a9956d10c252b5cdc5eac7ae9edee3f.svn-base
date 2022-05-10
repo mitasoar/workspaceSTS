@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="professorMapper">
+
+	<resultMap type="com.kh.teamprj.vo.LecVO" id="lec">
+		<id 	column="LEC_NO" 		property="lecNo"/>
+		<result column="LEC_NAME" 		property="lecName"/>
+		<result column="LEC_SCORE" 		property="lecScore"/>
+		<result column="COLL_NO" 		property="collNo"/>
+		<result column="DEPT_NO" 		property="deptNo"/>
+		<result column="EMP_NO" 		property="empNo"/>
+		<result column="CREATE_DATE" 	property="createDate"/>
+		<result column="MAX_NUM" 		property="maxNum"/>
+		<result column="NOW_NUM" 		property="nowNum"/>
+		<result column="LEC_CLOSE" 		property="lecClose"/>
+		<association property="deptVO" 	resultMap="dept"/>
+		<association property="semVO" 	resultMap="sem"/>
+		<association property="empVO" 	resultMap="emp"/>
+		<association property="gradeVO" resultMap="grade"/>
+		<collection property="timeList" resultMap="time"/>
+	</resultMap>
+	<resultMap type="com.kh.teamprj.vo.EmpVO" id="emp">
+		<id 	column="LEC_NO" 		property="empNo"/>
+		<result column="LEC_NAME" 		property="empType"/>
+		<result column="LEC_NAME" 		property="memNo"/>
+		<result column="LEC_NAME" 		property="deptNo"/>
+		<result column="LEC_NAME" 		property="collNo"/>
+		<association property="memberVO" 	resultMap="adminMapper.member"/>
+		<association property="deptVO" 		resultMap="dept"/>
+	</resultMap>
+	
+	<resultMap type="com.kh.teamprj.vo.GradeVO" id="grade">
+		<id 	column="GRADE_NO" 	property="gradeNo"/>
+		<result column="LEC_NO" 	property="lecNo"/>
+		<result column="GRADE" 		property="grade"/>
+		<result column="SCORE" 		property="score"/>
+		<result column="STU_NO" 	property="stuNo"/>
+		<result column="SEM_NO" 	property="semNo"/>
+	</resultMap>
+	<resultMap type="com.kh.teamprj.vo.CollVO" id="coll">
+		<id 	column="COLL_NO" 	property="collNo"/>
+		<result column="COLL_NAME" 	property="collName"/>
+	</resultMap>
+	<resultMap type="com.kh.teamprj.vo.DeptVO" id="dept">
+		<id 	column="DEPT_NO" 	property="deptNo"/>
+		<result column="DEPT_NAME" 	property="deptName"/>
+		<result column="COLL_NO" 	property="collNo"/>
+		<association property="collVO" resultMap="coll"/>
+	</resultMap>
+	<resultMap type="com.kh.teamprj.vo.SemesterVO" id="sem">
+		<id 	column="SEM_NO" 	property="semNo"/>
+		<result column="YEAR" 		property="year"/>
+		<result column="SEMESTER" 	property="semester"/>
+		<result column="SEM_NAME" 	property="semName"/>
+	</resultMap>
+	<resultMap type="com.kh.teamprj.vo.TimeVO" id="time">
+		<id 	column="TIME_NO" 		property="timeNo"/>
+		<result column="DAY" 			property="day"/>
+		<result column="FIRST_TIME" 	property="firstTime"/>
+		<result column="LAST_TIME" 		property="lastTime"/>
+		<result column="LEC_NO" 		property="lecNo"/>
+		<result column="LEC_NAME" 		property="lecName"/>
+	</resultMap>
+	<resultMap type="com.kh.teamprj.vo.AcademicAppVO" id="app">
+		<id 	column="APP_NO" 				property="appNo"/>
+		<result column="STU_NO" 				property="stuNo"/>
+		<result column="APPLY_TYPE" 			property="applyType"/>
+		<result column="APPLY_DATE" 			property="applyDate"/>
+		<result column="PROF_PROCESS_DATE" 		property="profProcessDate"/>
+		<result column="PROF_PROCESS_STATUS" 	property="profProcessStatus"/>
+		<result column="ADMIN_PROCESS_DATE" 	property="adminProcessDate"/>
+		<result column="ADMIN_PROCESS_STATUS" 	property="adminProcessStatus"/>
+		<result column="SEM_NO" 				property="semNo"/>
+		<association property="semesterVO" 	resultMap="sem"/>
+		<association property="studentVO" 	resultMap="adminMapper.student"/>
+	</resultMap>
+	
+	<!-- 강의 등록 -->
+	<insert id="insertLec">
+		INSERT INTO LEC (
+		    LEC_NO
+		    , LEC_NAME
+		    , LEC_SCORE
+		    , COLL_NO
+		    , DEPT_NO
+		    , EMP_NO
+		    , MAX_NUM
+		    , SEM_NO
+		) VALUES (
+		    (SELECT 'LEC_'||(NVL(MAX(TO_NUMBER(SUBSTR(LEC_NO, 5))), 0) + 1) FROM LEC)
+		    , #{lecName}
+		    , #{lecScore}
+		    , #{collNo}
+		    , #{deptNo}
+		    , #{empNo}
+		    , #{maxNum}
+		    , #{semVO.semNo}
+		)
+	</insert>
+	<!-- 요일 등록 -->
+	<insert id="insertLecTime">
+		INSERT INTO LEC_TIME (
+			TIME_NO
+			, DAY
+			, FIRST_TIME
+			, LAST_TIME
+			, LEC_NO
+		)VALUES (
+			 (SELECT 'TIME_'||(NVL(MAX(TO_NUMBER(SUBSTR(TIME_NO, 6))), 0) + 1) FROM LEC_TIME)
+			 , #{day}
+			 , #{firstTime}
+			 , #{lastTime}
+			 , (SELECT 'LEC_'||(NVL(MAX(TO_NUMBER(SUBSTR(LEC_NO, 5))), 0)) FROM LEC)
+		)
+		
+	</insert>
+	
+	<!-- 강의 폐강 -->
+	<update id="updateLecClose">
+		UPDATE LEC
+		SET LEC_CLOSE = 'Y'
+		WHERE LEC_NO = #{lecNo}
+	</update>
+	
+	<!-- 강의 목록 -->
+	<select id="selectLecList" resultMap="lec">		
+		SELECT L.LEC_NO 
+		    , LEC_NAME 
+		    , LEC_SCORE
+		    , L.COLL_NO 
+		    , L.DEPT_NO 
+		    , L.EMP_NO
+		    , MEM_NAME
+		    , L.CREATE_DATE
+		    , MAX_NUM 
+		    , NOW_NUM
+		    , DAY
+		    , FIRST_TIME
+		    , LAST_TIME
+		    , COLL_NAME
+		    , DEPT_NAME
+		FROM LEC L, COLLEGE C, DEPT D, LEC_TIME T, EMP E, MEMBER M
+		WHERE L.COLL_NO = C.COLL_NO
+		AND L.DEPT_NO = D.DEPT_NO
+		AND L.EMP_NO = E.EMP_NO
+		AND E.MEM_NO = M.MEM_NO
+		AND L.LEC_NO = T.LEC_NO
+		<!-- 검색을 위한 조건 -->
+		<if test="collNo != null and collNo != ''">
+		AND L.COLL_NO = #{collNo}
+		</if>
+		<if test="deptNo != null and deptNo != ''">
+		AND L.DEPT_NO = #{deptNo}
+		</if>
+		<if test="lecName != null and lecName != ''">
+		AND LEC_NAME LIKE  '%' ||  #{lecName} || '%'
+		</if>
+		<if test="empNo != null and empNo != ''">
+		AND L.EMP_NO = #{empNo}
+		</if>
+		<if test="lecClose != null and !lecClose.equals('')">
+		AND LEC_CLOSE = #{lecClose}
+		</if>
+		ORDER BY CREATE_DATE
+	</select>
+	<!-- 강의 상세정보 -->
+	<select id="selectLecDetail" resultMap="lec">		
+		SELECT L.LEC_NO 
+		    , LEC_NAME 
+		    , LEC_SCORE
+		    , L.COLL_NO 
+		    , L.DEPT_NO 
+		    , L.EMP_NO
+		    , MEM_NAME
+		    , L.CREATE_DATE
+		    , MAX_NUM 
+		    , NOW_NUM
+		    , DAY
+		    , FIRST_TIME
+		    , LAST_TIME
+		    , COLL_NAME
+		    , DEPT_NAME
+		FROM LEC L, COLLEGE C, DEPT D, LEC_TIME T, EMP E, MEMBER M
+		WHERE L.COLL_NO = C.COLL_NO
+		AND L.DEPT_NO = D.DEPT_NO
+		AND L.EMP_NO = E.EMP_NO
+		AND E.MEM_NO = M.MEM_NO
+		AND L.LEC_NO = T.LEC_NO
+		AND L.LEC_NO = #{lecNo}
+		ORDER BY CREATE_DATE
+	</select>
+	
+	<!-- 강의 시간 조회 -->
+	<select id="selectLecTime" resultMap="time">
+		SELECT TIME_NO
+		    , L.LEC_NO
+		    , LEC_NAME
+		    , DAY
+		    , FIRST_TIME
+		    , LAST_TIME
+		FROM LEC L, LEC_TIME T
+		WHERE L.LEC_NO = T.LEC_NO
+		AND L.EMP_NO = #{empNo}
+	</select>
+	
+	
+	<!-- 성적 등록 -->
+	<update id="updateGrade">
+		UPDATE STU_GRADE
+		SET GRADE = #{grade}
+		<if test="!grade.equals('F')">
+		    , SCORE = (SELECT LEC_SCORE FROM LEC WHERE LEC_NO = #{lecNo})
+		</if>
+		WHERE STU_NO = #{stuNo}
+		AND LEC_NO = #{lecNo}
+	</update>
+	
+	<!-- 단과대 정보 조회 -->
+	<select id="selectCollege" resultMap="coll">
+		SELECT COLL_NO
+		    , COLL_NAME
+		FROM COLLEGE
+	</select>
+	
+	<!-- 학과 조회 -->
+	<select id="selectDeptList" resultMap="dept">
+		SELECT DEPT_NO
+			, DEPT_NAME
+		FROM DEPT
+		WHERE COLL_NO = #{collNo}
+	</select>
+	
+	<!-- 학기정보 조회 -->
+	<select id="selectSem" resultMap="sem">
+		SELECT SEM_NO
+			, YEAR
+			, SEMESTER
+			, SEM_NAME
+		FROM SEMESTER
+	</select>
+	
+	<!-- 학적 변동 신청 조회 -->
+	<select id="selectAppList" resultMap="app">
+		SELECT APP_NO
+		    , A.STU_NO
+		    , APPLY_TYPE
+		    , APPLY_DATE
+		    , MEM_NAME
+		    , SEM_NAME
+		    , STU_STATUS
+		FROM ACADEMIC_APP A, MEMBER M, STUDENT S, SEMESTER R
+		WHERE A.STU_NO = S.STU_NO
+		AND S.MEM_NO = M.MEM_NO
+		AND A.SEM_NO = R.SEM_NO
+		AND PROF_PROCESS_STATUS = '미승인'
+	</select>
+	
+	<!-- 학적 변동 승인 -->
+	<update id="updateApp">
+		UPDATE ACADEMIC_APP
+		SET PROF_PROCESS_DATE = #{profProcessDate}
+		    , PROF_PROCESS_STATUS = #{profProcessStatus}
+		WHERE APP_NO = #{appNo}
+	</update>
+	
+	
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,125 @@
+function searchDept() {
+	var selectColl = document.getElementById('selectColl').value
+	$.ajax({
+		url: '/pro/selectDept', //요청경로
+		type: 'post',
+		data: {'collNo':selectColl}, //필요한 데이터 '데이터이름':값
+		success: function(result) {
+			//ajax 실행 성공 후 실행할 코드 작성
+			str = '';
+			str = '<option value="">전체</option>';
+			for(var i = 0 ; i < result.length ; i++){
+				str += '<option value="' + result[i].deptNo + '">'+ result[i].deptName + '</option>'
+			}
+			document.getElementById('selectDept').innerHTML = str;
+			
+		},
+		error: function() {
+			//ajax 실행 실패 시 실행되는 구간
+			alert('실패');
+		}
+	});
+}
+
+function searchLec() {
+	var collNo = document.getElementById('selectColl').value
+	var deptNo = document.getElementById('selectDept').value
+	var lecName = document.getElementById('searchName').value
+	$.ajax({
+		url: '/stu/searchLecList', //요청경로
+		type: 'post',
+		data: {'collNo':collNo, 'deptNo':deptNo, 'lecName':lecName}, //필요한 데이터 '데이터이름':값
+		success: function(result) {
+			var str = '';
+			
+			for (var i = 0; i < result.length; i++) {
+				var day = '';
+				var time = '';
+				for(var j = 0 ; j < result[i].timeList.length ; j++){
+					day += result[i].timeList[i].day;
+					if(result[i].timeList[i].firstTime == result[i].timeList[i].lastTime){
+						time += result[i].timeList[i].firstTime + ' 교시 ';
+					}
+					else{
+						time += result[i].timeList[i].firstTime + ' ~ ';
+						time += result[i].timeList[i].lastTime + ' 교시 ';
+					}
+				}
+				str += '<tr>';
+				str += '<th scope="row">' + result[i].lecNo + '</th>';
+				str += '<td>' + result[i].lecName + '</td>';
+				str += '<td>' + result[i].lecScore + '</td>';
+				str += '<td>' + result[i].deptVO.collVO.collName + '</td>';
+				str += '<td>' + result[i].deptVO.deptName + '</td>';
+				str += '<td>' + result[i].empVO.memberVO.memName + '</td>';
+				str += '<td>' + result[i].maxNum + '</td>';
+				str += '<td>' + result[i].nowNum + '</td>';
+				str += '<td>' + day + ' / ' + time + '</td>';
+				str += '<td>' + result[i].lecMemo + '</td>';
+				str += '<td><button type="button" onclick="regClass(' +'\'' + result[i].lecNo +'\'' + ', ' + result[i].nowNum + ', ' + result[i].maxNum + ');">수강 신청</button></td>'
+				str += '</tr>';
+			}
+
+			document.getElementById('lecTable').innerHTML = str;
+
+		},
+		error: function() {
+			//ajax 실행 실패 시 실행되는 구간
+			alert('실패');
+
+		}
+	});
+
+}
+
+function regClass(lecNo, nowNum, maxNum){
+	if(maxNum > nowNum){
+		$.ajax({
+			url: '/stu/regClass', //요청경로
+			type: 'post',
+			data: {'lecNo':lecNo}, //필요한 데이터 '데이터이름':값
+			success: function(result) {
+				alert('수강 신청이 완료 되었습니다!');
+				var str = '';
+				
+				for (var i = 0; i < result.length; i++) {
+					var day = '';
+					var time = '';
+					for(var j = 0 ; j < result[i].timeList.length ; j++){
+						day += result[i].timeList[i].day;
+						if(result[i].timeList[i].firstTime == result[i].timeList[i].lastTime){
+							time += result[i].timeList[i].firstTime + ' 교시 ';
+						}
+						else{
+							time += result[i].timeList[i].firstTime + ' ~ ';
+							time += result[i].timeList[i].lastTime + ' 교시 ';
+						}
+					}
+					str += '<tr>';
+					str += '<th scope="row">' + result[i].lecNo + '</th>';
+					str += '<td>' + result[i].lecName + '</td>';
+					str += '<td>' + result[i].lecScore + '</td>';
+					str += '<td>' + result[i].deptVO.collVO.collName + '</td>';
+					str += '<td>' + result[i].deptVO.deptName + '</td>';
+					str += '<td>' + result[i].empVO.memberVO.memName + '</td>';
+					str += '<td>' + result[i].maxNum + '</td>';
+					str += '<td>' + result[i].nowNum + '</td>';
+					str += '<td>' + day + ' / ' + time + '</td>';
+					str += '<td>' + result[i].lecMemo + '</td>';
+					str += '<td><button type="button">신청 완료</button></td>'
+					str += '</tr>';
+				}
+
+				document.getElementById('lecTable').innerHTML = str;
+			},
+			error: function() {
+				alert('수강 신청을 실패 하셨습니다.');
+			}
+		});
+	}
+	else{
+		alert('이 강의는 수강 신청이 마감 되었습니다.');
+	}
+	
+	
+}

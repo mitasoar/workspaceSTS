@@ -1,0 +1,141 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<div class="row">
+	<div class="col-3">
+		<select onchange="searchDept();" id="selectColl" name="collNo" class="form-select" required>
+			<option value="">전체</option>
+			<c:forEach items="${collList }" var="coll">
+				<option value="${coll.collNo }">${coll.collName }</option>
+			</c:forEach>
+		</select>
+	</div>
+	<div class="col-3">
+		<select class="form-select" id="selectDept">
+			<option value="">전체</option>
+		</select>
+	</div>
+	<div class="col-2">
+			<div class="form-check">
+				<input class="form-check-input radiobox" type="radio" name="lecClose" id="flexRadioDefault1" value="" checked> 
+				<label class="form-check-label" for="flexRadioDefault1"> 전체 </label>
+			</div>
+			<div class="form-check">
+				<input class="form-check-input radiobox" type="radio" name="lecClose" id="flexRadioDefault2" value="N"> 
+				<label class="form-check-label" for="flexRadioDefault2"> 강의 </label>
+			</div>
+			<div class="form-check">
+				<input class="form-check-input radiobox" type="radio" name="lecClose" id="flexRadioDefault3" value="Y"> 
+				<label class="form-check-label" for="flexRadioDefault3"> 폐강 </label>
+			</div>
+		</div>
+	<div class="col-4">
+		<div class="input-group mb-3">
+			<input type="text" class="form-control" placeholder="검색" id="searchName">
+			<button class="btn btn-outline-secondary" type="button" id="button-addon2" onclick="searchLec();">검색</button>
+		</div>
+	</div>
+</div>
+<table class="table">
+	<thead>
+		<tr>
+			<th scope="col">#</th>
+			<th scope="col">강의명</th>
+			<th scope="col">학점</th>
+			<th scope="col">단대명</th>
+			<th scope="col">학과명</th>
+			<th scope="col">담당교수</th>
+			<th scope="col">최대인원</th>
+			<th scope="col">현재인원</th>
+			<th scope="col">날짜</th>
+			<th scope="col">강의상태</th>
+			<th scope="col">학생목록</th>
+			<th scope="col">폐강</th>
+		</tr>
+	</thead>
+	<tbody id="lecTable">
+		<c:forEach items="${lecList }" var="lec">
+			<tr>
+				<th scope="row">${lec.lecNo }</th>
+				<td>${lec.lecName }</td>
+				<td>${lec.lecScore }</td>
+				<td>${lec.deptVO.collVO.collName }</td>
+				<td>${lec.deptVO.deptName }</td>
+				<td>${lec.empVO.memberVO.memName }</td>
+				<td>${lec.maxNum }</td>
+				<td>${lec.nowNum }</td>
+				<td>
+					<c:forEach items="${lec.timeList }" var="time">
+						${time.day } / 
+						<c:choose>
+							<c:when test="${time.firstTime eq time.lastTime}">
+								${time.firstTime } 교시
+							</c:when>
+							<c:otherwise>
+								${time.firstTime } ~ ${time.lastTime } 교시
+							</c:otherwise>
+						</c:choose>
+						<br>
+					</c:forEach>
+				</td>
+				<td>
+					<c:choose>
+						<c:when test="${lec.lecClose eq 'N' }">
+							강의중
+						</c:when>
+						<c:otherwise>
+							폐강
+						</c:otherwise>
+					</c:choose>
+				</td>
+				<td><button type="button" class="btn btn-dark" onclick="searchStu('${lec.lecNo}');" >학생 목록</button></td>
+				<td><button type="button" class="btn btn-dark" onclick="lecClose('${lec.lecNo}');" >폐강</button></td>
+			</tr>
+		</c:forEach>
+	</tbody>
+</table>
+
+
+
+<!-- Modal -->
+<div class="modal fade" id="lecStuModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">학생 목록</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<table class="table">
+					<thead>
+						<tr>
+							<th scope="col">학번</th>
+							<th scope="col">이름</th>
+							<th scope="col">단대명</th>
+							<th scope="col">학과명</th>
+							<th scope="col">학년</th>
+							<th scope="col">성적</th>
+							<th scope="col">변경</th>
+							<th scope="col"></th>
+						</tr>
+					</thead>
+					<tbody id="lecStuTbody">
+						
+					</tbody>
+				</table>
+			</div>
+
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript" src="/resources/js/professor/lec_list.js?ver=23"></script>
+</body>
+</html>

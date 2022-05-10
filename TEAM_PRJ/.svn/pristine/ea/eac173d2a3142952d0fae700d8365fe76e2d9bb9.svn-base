@@ -1,0 +1,116 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+휴/복학 내역
+<div class="" id="">
+	<!-- 학적관리 테이블을 학생번호로 조회 -->
+	<table class="table">
+		<colgroup>
+			<col width="5%">
+			<col width="5%">
+			<col width="5%">
+			<col width="15%">
+			<col width="15%">
+			<col width="10%">
+			<col width="15%">
+			<col width="10%">
+			<col width="15%">
+			<col width="5%">
+		</colgroup>
+		<tr align="center">
+			<td>순번</td>
+			<td>연도</td>
+			<td>학기</td>
+			<td>학적변동내용</td>
+			<td>신청일자</td>
+			<td>담당교수승인</td>
+			<td>교수승인일자</td>
+			<td>최종승인</td>
+			<td>학적변동일자</td>
+			<td>취소</td>
+		</tr>
+	 	<c:choose>
+			<c:when test="${empty applyList}">
+				<tr>
+					<td colspan="9" align="center">휴학 및 복학신청 내역이 존재하지 않습니다.</td>
+				</tr>
+			</c:when>
+			<c:otherwise>
+				<c:forEach items="${applyList }" var="apply" varStatus="status">
+					<tr align="center">
+						<td>${status.index + 1 }</td>
+						<td>${apply.semesterVO.year }</td>
+						<td>${apply.semesterVO.semester }</td>
+						<td>${apply.applyType }</td>
+						<td>${apply.applyDate }</td>
+						<td>${apply.profProcessStatus }</td>
+						<td>${apply.profProcessDate }</td>
+						<td>${apply.adminProcessStatus }</td>
+						<td>${apply.adminProcessDate }</td>
+						<td>
+							<c:choose>
+								<%-- 최종미승인 시 취소 가능 --%>
+								<c:when test="${apply.adminProcessStatus eq '미승인' }">
+									<input type="button" onclick="deleteAcademicAppAjax('${apply.appNo}');" value="취소" class="btn btn-secondary btn-sm">
+								</c:when>
+								<%-- 최종승인 시 취소 불가능(비활성화 버튼) --%>
+								<c:otherwise>
+									<button type="button" class="btn btn-secondary btn-sm" disabled>불가</button>
+								</c:otherwise>
+							</c:choose>
+						</td>
+					</tr>
+				</c:forEach>
+			</c:otherwise>
+		</c:choose>
+	</table>
+</div>
+휴/복학 신청
+<div>
+	<form action="/stu/academicApp" method="post">
+		<table class="table">
+			<colgroup>
+				<col width="20%">
+				<col width="30%">
+				<col width="20%">
+				<col width="30%">
+			</colgroup>
+			<tr>
+				<td align="center">신청내용</td>
+				<td>
+					<div class="row">
+						<div class="col-4">
+							<select class="form-select" onchange="typeChange();" id="category">
+								<option value="선택">선택</option>
+								<option value="휴학">휴학</option>
+								<option value="복학">복학</option>
+							</select>
+						</div>
+						<div class="col-8">
+							<select class="form-select" name="applyType" id="applyType">
+								<option value="">신청유형을 선택하세요</option>
+							</select>
+						</div>
+					</div>
+				</td>
+				<td align="center">휴/복학 일자</td>
+				<td><input type="date" class="form-control" name="applyDate" id="applyDate" onchange="dateChange();"></td>
+			</tr>
+		</table>
+		<input type="hidden" name="stuNo" value="${sessionScope.loginInfo.stuNo }">
+		<div align="right" id="btnDiv">
+			<!-- <input type="submit" class="btn btn-primary" value="신청"> -->
+			<input type="button" class="btn btn-primary" value="신청" onclick="alert('신청내용을 선택하세요')">
+		</div>
+	</form>
+</div>
+<script type="text/javascript" src="/resources/js/stu/academic.js"></script>
+</body>
+</html>

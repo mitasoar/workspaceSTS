@@ -1,0 +1,62 @@
+function checkAll(){
+	var isChecked = document.getElementById('totalChk').checked;
+	var checkboxes = document.getElementsByClassName('chk');
+	
+	//제목줄의 체크박스가 체크되었을 때
+	if(isChecked){
+		for(var i = 0; i < checkboxes.length; i++){
+			checkboxes[i].checked = true;
+		}
+	}
+	else{
+		for(var i = 0; i < checkboxes.length; i++){
+			checkboxes[i].checked = false;
+		}
+	}
+}
+
+function approve(appNo, applyType, stuNo, index, adminProcessStatus){
+	if(applyType != '복학'){
+		applyType = '휴학';
+	}
+	
+	if(confirm(applyType + '신청을 승인하시겠습니까?')){
+		if(applyType == '복학'){
+			applyType = '재학';
+		}
+		$.ajax({
+			url: '/admin/approveApply', 
+			type: 'post',
+			data: {'appNo': appNo,
+					'applyType': applyType,
+					'stuNo': stuNo},
+			success: function(result) {
+				alert('최종승인되었습니다.');
+				var str = ' ';
+				str += '<input type="radio" class="form-check-input" disabled> 승인대기';
+				str += ' <input type="radio" class="form-check-input" checked disabled> 승인완료';
+				
+				document.getElementById('radioTd' + index).innerHTML = str;	
+				document.getElementById('adminProcessDateTd' + index).innerHTML = result.adminProcessDate;
+			},
+			error: function() {
+				alert('실패');
+			}
+		});
+	} else {
+		var str = ' ';
+		str += '<input type="radio" class="form-check-input"';
+		if(adminProcessStatus == '미승인'){
+			str += 'checked';
+		}
+		str += '> 승인대기 ';
+		
+		str += '<input type="radio" class="form-check-input" onclick="approve(\'' + appNo + '\', \'' + applyType + '\', \'' + stuNo + '\', \'' + index + '\', \'' + adminProcessStatus + '\');"';
+		if(adminProcessStatus == '승인완료'){
+			str += 'checked';
+		}
+		str += '> 승인완료';
+		
+		document.getElementById('radioTd' + index).innerHTML = str;		
+	}
+}

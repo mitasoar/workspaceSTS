@@ -1,0 +1,67 @@
+function searchDept() {
+	var selectColl = document.getElementById('selectColl').value
+	$.ajax({
+		url: '/pro/selectDept', //요청경로
+		type: 'post',
+		data: {'collNo':selectColl}, //필요한 데이터 '데이터이름':값
+		success: function(result) {
+			//ajax 실행 성공 후 실행할 코드 작성
+			str = '';
+			str = '<option>선택</option>';
+			for(var i = 0 ; i < result.length ; i++){
+				str += '<option value="' + result[i].deptNo + '">'+ result[i].deptName + '</option>'
+			}
+			document.getElementById('selectDept').innerHTML = str;
+			
+		},
+		error: function() {
+			//ajax 실행 실패 시 실행되는 구간
+			alert('실패');
+		}
+	});
+}
+
+
+function addTime(num) {
+	
+	var table = document.getElementById('lecTable').insertRow()
+	
+	var td1 = table.insertCell(0);
+	var td2 = table.insertCell(1);
+	var td3 = table.insertCell(2);
+	var td4 = table.insertCell(3);
+
+	td1.innerText = '요일';
+	td2.innerHTML = '<select name="timeList['+ (num + 1) +'].day"><option>월</option><option>화</option><option>수</option><option>목</option><option>금</option></select>';
+  	td3.innerText = '시간';
+  	td4.innerHTML = '<select name="timeList['+ (num + 1) +'].firstTime"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option>'
+	+ '	</select> 교시 ~ <select name="timeList['+ (num + 1) +'].lastTime"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option></select>교시';	
+  	
+  	document.getElementById('addButton').innerHTML = '<button type="button" onclick="addTime(' + (num + 1) + ');">추가</button>';
+  	document.getElementById('removeButton').innerHTML = '<button type="button" onclick="removeTime('+ (num + 1) +');">삭제</button>';
+  	
+}
+
+function removeTime(num) {
+	
+	if(num > 0){
+		document.getElementById('lecTable').deleteRow(-1);
+	}
+	var totalNum = num - 1;
+	document.getElementById('removeButton').innerHTML = '<button type="button" onclick="removeTime('+ totalNum +');">삭제</button>';
+	document.getElementById('addButton').innerHTML = '<button type="button" onclick="addTime(' + totalNum+ ');">추가</button>';
+	
+	if(totalNum <= 0){
+		document.getElementById('removeButton').innerHTML = '';
+	}
+}
+
+
+
+
+
+
+
+
+
+

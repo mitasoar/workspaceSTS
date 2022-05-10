@@ -1,0 +1,62 @@
+//신청내용 변경 시
+function typeChange(){
+	var applyType = document.getElementById('category').value;
+	var applyDate = document.getElementById('applyDate').value;
+
+	//jsp에 초기버트은 써밋이 아니고 alert만 수행
+	if(applyType == '선택'){
+		
+	}
+	//휴학 선택 시
+	if(applyType == '휴학'){
+		//신청타입 옵션 변경
+		var str = '<option value="일반휴학">일반휴학</option>';
+		str += '<option value="군휴학">군휴학</option>';
+		str += '<option value="가사휴학">가사휴학</option>';
+		document.getElementById('applyType').innerHTML = str;
+		//신청일자 데이터가 없으면 여전히 써밋 못함, alert내용 다르게
+		if(applyDate == ''){
+			document.getElementById('btnDiv').innerHTML = '<input type="button" class="btn btn-primary" value="신청" onclick="alert(\'신청일자를 선택하세요\')">';			
+		}
+		//신청일자 데이터가 있으면 써밋 활성화
+		if(applyDate != ''){
+			btnActivate();
+		}
+	}
+	//복학 선택 시
+	if(applyType == '복학'){
+		
+	}
+}
+
+//신청일자 변경 시
+function dateChange(){
+	var applyType = document.getElementById('applyType').value;
+	var applyDate = document.getElementById('applyDate').value;
+	//신청내용도 작성했으면 써밋 활성화
+	if(applyType != ''){
+		btnActivate();
+	}
+}
+
+function btnActivate(){
+	document.getElementById('btnDiv').innerHTML = '<input type="submit" class="btn btn-primary" value="신청">'
+}
+
+function deleteAcademicAppAjax(appNo){
+	confirm('휴/복학 신청을 취소하시겠습니까?');
+	
+	$.ajax({
+		url: '/stu/deleteAcademicAppAjax', //요청경로
+		type: 'post',
+		data: {'appNo':appNo}, //필요한 데이터 '데이터이름':값
+		success: function(result) {
+			//ajax 실행 성공 후 실행할 코드 작성
+			alert('성공');
+		},
+		error: function() {
+			//ajax 실행 실패 시 실행되는 구간
+			alert('실패');
+		}
+	});
+}

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="studentMapper">
+
+	<!-- 학생 -->
+
+	<resultMap type="com.kh.teamprj.vo.StudentVO" id="student">
+		<id 	column="STU_NO" 		property="stuNo"/>
+		<result column="COLL_NO" 		property="collNo"/>
+		<result column="DEPT_NO" 		property="deptNo"/>
+		<result column="DOUBLE_NO" 		property="dobleNo"/>
+		<result column="STU_YEAR" 		property="stuYear"/>
+		<result column="STU_SEM" 		property="stuSem"/>
+		<result column="STU_STATUS" 	property="stuStatus"/>
+		<result column="MEM_NO" 		property="memNo"/>
+	</resultMap>
+	<resultMap type="com.kh.teamprj.vo.AcademicAppVO" id="academicApp">
+		<id 	column="APP_NO" 				property="appNo"/>
+		<result column="STU_NO" 				property="stuNo"/>
+		<result column="APPLY_TYPE" 			property="applyType"/>
+		<result column="APPLY_DATE" 			property="applyDate"/>
+		<result column="PROF_PROCESS_DATE" 		property="profProcessDate"/>
+		<result column="PROF_PROCESS_STATUS" 	property="profProcessStatus"/>
+		<result column="ADMIN_PROCESS_DATE" 	property="adminProcessDate"/>
+		<result column="ADMIN_PROCESS_STATUS" 	property="adminProcessStatus"/>
+		<result column="SEM_NO" 				property="semNo"/>
+		<association property="semesterVO" 		resultMap="professorMapper.sem" />
+	</resultMap>
+	
+	
+	<!-- 학생정보변경 -->
+	<update id="updateStuInfo">
+		UPDATE MEMBER
+		SET MEM_PHONE = #{memberVO.memPhone}
+			, MEM_ADDR = #{memberVO.memAddr}
+		WHERE MEM_NO = #{memberVO.memNo}
+	</update>
+	
+	<!-- 수강신청 -->
+	<insert id="insertClass">
+		INSERT INTO STU_GRADE(
+		    GRADE_NO
+		    , LEC_NO
+		    , STU_NO
+		    , SEM_NO
+		)VALUES(
+		    (SELECT 'GRADE_'||(NVL(MAX(TO_NUMBER(SUBSTR(GRADE_NO, 7))), 0) + 1) FROM STU_GRADE)
+		    , #{lecNo}
+		    , #{stuNo}
+		    , #{semNo}
+		)
+	</insert>
+	
+	<!-- 수강 신청후 수강인원 +1 -->
+	<update id="updateNowNum">
+		UPDATE LEC
+		SET NOW_NUM = (SELECT (MAX(NOW_NUM) + 1) FROM LEC)
+		WHERE LEC_NO = #{lecNo}
+	</update>
+	
+	<!-- 휴복학 내역 조회 -->
+	<select id="selectAcademicAppList" resultMap="academicApp">
+		SELECT APP_NO
+			, STU_NO
+			, APPLY_TYPE
+			, APPLY_DATE
+			, PROF_PROCESS_DATE
+			, PROF_PROCESS_STATUS
+			, ADMIN_PROCESS_DATE
+			, ADMIN_PROCESS_STATUS
+			, A.SEM_NO
+			, YEAR
+			, SEMESTER
+			, SEM_NAME
+		FROM ACADEMIC_APP A, SEMESTER S
+		WHERE A.SEM_NO = S.SEM_NO
+		AND STU_NO = #{stuNo}
+	</select>
+	<!-- 휴복학 신청 -->
+	<insert id="insertAcademicApp">
+		INSERT INTO ACADEMIC_APP (
+			APP_NO
+			, STU_NO
+			, APPLY_TYPE
+			, APPLY_DATE
+			, SEM_NO
+		) VALUES (
+			CONCAT('APP_', (SELECT NVL(MAX(TO_NUMBER(SUBSTR(APP_NO, 5))), 0) + 1 FROM ACADEMIC_APP))
+			, #{stuNo}
+			, #{applyType}
+			, #{applyDate}
+			, 'SEM_1'
+		)
+	</insert>
+	<!-- 학기번호로 학기정보 조회 -->
+	<select id="selectSem" resultMap="professorMapper.sem">
+		SELECT SEM_NO
+			, YEAR
+			, SEMESTER
+			, SEM_NAME
+		FROM SEMESTER
+		WHERE SEM_NO = #{semNo}
+	</select>
+	<!-- 휴/복학신청 취소(삭제) -->
+	<delete id="deleteAcademicApp">
+		DELETE FROM ACADEMIC_APP
+		WHERE APP_NO = #{appNo}
+	</delete>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+

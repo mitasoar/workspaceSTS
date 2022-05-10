@@ -1,0 +1,141 @@
+package com.kh.teamprj.vo;
+
+// 회원VO
+public class MemberVO {
+	private String memNo; // 회원번호
+	private String memPw; // 비밀번호
+	private String memName; // 이름
+	private String memEmail; // 이메일
+	private String memAddr; // 주소
+	private String memPhone; // 연락처
+	private String memImage; // 사진
+	private String memGender; // 성별
+	private String memBirth; // 생일
+	private String memType; // 회원 유형
+	private String isJoin; // 가입/탈퇴 여부
+	private String createDate; // 가입일
+	private String withdrawDate; // 탈퇴일
+	private String memId; // 로그인을 위한 id변수
+	
+	public String getMemId() {
+		return memId;
+	}
+
+	public void setMemId(String memId) {
+		this.memId = memId;
+	}
+
+	public String getMemNo() {
+		return memNo;
+	}
+
+	public void setMemNo(String memNo) {
+		this.memNo = memNo;
+	}
+
+	public String getMemPw() {
+		return memPw;
+	}
+
+	public void setMemPw(String memPw) {
+		this.memPw = memPw;
+	}
+
+	public String getMemName() {
+		return memName;
+	}
+
+	public void setMemName(String memName) {
+		this.memName = memName;
+	}
+
+	public String getMemEmail() {
+		return memEmail;
+	}
+
+	public void setMemEmail(String memEmail) {
+		this.memEmail = memEmail;
+	}
+
+	public String getMemAddr() {
+		return memAddr;
+	}
+
+	public void setMemAddr(String memAddr) {
+		this.memAddr = memAddr.replace(",", "/");
+	}
+
+	public String getMemPhone() {
+		return memPhone;
+	}
+
+	public void setMemPhone(String memPhone) {
+		this.memPhone = memPhone.replace(",", "-");
+	}
+
+	public String getMemImage() {
+		return memImage;
+	}
+
+	public void setMemImage(String memImage) {
+		this.memImage = memImage;
+	}
+
+	public String getMemGender() {
+		return memGender;
+	}
+
+	public void setMemGender(String memGender) {
+		this.memGender = memGender;
+	}
+
+	public String getMemBirth() {
+		return memBirth;
+	}
+
+	public void setMemBirth(String memBirth) {
+		this.memBirth = memBirth;
+	}
+
+	public String getMemType() {
+		return memType;
+	}
+
+	public void setMemType(String memType) {
+		this.memType = memType;
+	}
+
+	public String getIsJoin() {
+		return isJoin;
+	}
+
+	public void setIsJoin(String isJoin) {
+		this.isJoin = isJoin;
+	}
+
+	public String getCreateDate() {
+		return createDate;
+	}
+
+	public void setCreateDate(String createDate) {
+		this.createDate = createDate;
+	}
+
+	public String getWithdrawDate() {
+		return withdrawDate;
+	}
+
+	public void setWithdrawDate(String withdrawDate) {
+		this.withdrawDate = withdrawDate;
+	}
+
+	@Override
+	public String toString() {
+		return "MemberVO [memNo=" + memNo + ", memPw=" + memPw + ", memName=" + memName + ", memEmail=" + memEmail
+				+ ", memAddr=" + memAddr + ", memPhone=" + memPhone + ", memImage=" + memImage + ", memGender="
+				+ memGender + ", memBirth=" + memBirth + ", memType=" + memType + ", isJoin=" + isJoin + ", createDate="
+				+ createDate + ", withdrawDate=" + withdrawDate + ", memId=" + memId + "]";
+	}
+	
+	
+}

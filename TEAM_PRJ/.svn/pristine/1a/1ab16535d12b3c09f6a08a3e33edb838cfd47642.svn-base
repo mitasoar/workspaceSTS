@@ -1,0 +1,27 @@
+package com.kh.teamprj.service;
+
+import java.util.List;
+
+import com.kh.teamprj.vo.AcademicAppVO;
+import com.kh.teamprj.vo.GradeVO;
+import com.kh.teamprj.vo.LecVO;
+import com.kh.teamprj.vo.SemesterVO;
+import com.kh.teamprj.vo.StudentVO;
+
+public interface StudentService {
+	//학생 정보 수정
+	void updateStuInfo(StudentVO studentVO);
+	
+	List<LecVO> selectLecList(LecVO lecVO);
+	
+	void insertClass(GradeVO gradeVO);
+	//휴복학 내역 조회
+	List<AcademicAppVO> selectAcademicAppList(StudentVO studentVO);
+	//휴복학 신청
+	void insertAcademicApp(AcademicAppVO academicAppVO);
+	//학기정보 조회
+	SemesterVO selectSem(SemesterVO semesterVO);
+	//휴/복학신청 취소(삭제)
+	void deleteAcademicApp(AcademicAppVO academicAppVO);
+}
+

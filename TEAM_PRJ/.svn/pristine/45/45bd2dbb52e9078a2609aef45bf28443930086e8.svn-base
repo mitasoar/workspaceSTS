@@ -1,0 +1,61 @@
+package com.kh.teamprj.vo;
+
+
+public class ScheduleVO {
+	//강의명
+	private String lecName;
+	//월화수
+	private String lecDay;
+	//1교시,,, 2교시...
+	private int lecTime;
+	
+	private String color;
+
+	public ScheduleVO(String lecName, String lecDay, int lecTime, String color) {
+		this.lecName = lecName;
+		this.lecDay = lecDay;
+		this.lecTime = lecTime;
+		this.color = color;
+	}
+
+	public String getLecName() {
+		return lecName;
+	}
+
+	public void setLecName(String lecName) {
+		this.lecName = lecName;
+	}
+
+	public String getLecDay() {
+		return lecDay;
+	}
+
+	public void setLecDay(String lecDay) {
+		this.lecDay = lecDay;
+	}
+
+	public int getLecTime() {
+		return lecTime;
+	}
+
+	public void setLecTime(int lecTime) {
+		this.lecTime = lecTime;
+	}
+
+	public String getColor() {
+		return color;
+	}
+
+	public void setColor(String color) {
+		this.color = color;
+	}
+
+	@Override
+	public String toString() {
+		return "ScheduleVO [lecName=" + lecName + ", lecDay=" + lecDay + ", lecTime=" + lecTime + ", color=" + color
+				+ "]";
+	}
+
+	
+	
+}

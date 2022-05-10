@@ -1,0 +1,164 @@
+function searchStu(lecNo) {
+	$.ajax({
+		url: '/pro/lecStuList', //요청경로
+		type: 'post',
+		data: { 'gradeList[0].lecNo': lecNo }, //필요한 데이터 '데이터이름':값
+		success: function(result) {
+
+			//result의 데이터로 모달창 화면을 구성한다.
+			var str = '';
+			for (var i = 0; i < result.length; i++) {
+				str += '<tr>';
+				str += '<th scope="row" id="stuNo' + i +'">' + result[i].stuNo + '</th>';
+				str += '<td>' + result[i].memberVO.memName + '</td>';
+				str += '<td>' + result[i].deptVO.collVO.collName + '</td>';
+				str += '<td>' + result[i].deptVO.deptName + '</td>';
+				str += '<td>' + result[i].stuYear + '</td>';
+				str += '<td>' + result[i].gradeList[0].grade + '</td>';
+				str += '<td><select id="' + ('selectGrade' + i) + '">'
+				str += '<option>미선택</option>'
+				str += '<option>A</option>'
+				str += '<option>B</option>'
+				str += '<option>C</option>'
+				str += '<option>D</option>'
+				str += '<option>E</option>'
+				str += '<option>F</option>'
+				str += '</select></td>'
+				str += '<td><button type="button" onclick="regGrade(' + i + ', ' + '\'' + lecNo +'\'' +  ');">성적 변경</button></td>'
+				str += '</tr>';
+			}
+
+			//document.getElementById('modalTbody').innerHTML = str;
+			document.getElementById('lecStuTbody').innerHTML = str;
+
+		},
+		error: function() {
+			//ajax 실행 실패 시 실행되는 구간
+			alert('실패');
+
+		}
+	});
+
+	var modalTag = document.getElementById('lecStuModal');
+	var myModal = new bootstrap.Modal(modalTag);
+	myModal.show();
+	//myModal.hide();
+
+}
+
+function regGrade(selectNum, lecNo) {
+	var grade = document.getElementById('selectGrade' + selectNum).value;
+	var stuNo = document.getElementById('stuNo' + selectNum).innerHTML;
+	$.ajax({
+		url: '/pro/regGrade', //요청경로
+		type: 'post',
+		data: {'grade':grade, 'lecNo':lecNo , 'stuNo':stuNo}, //필요한 데이터 '데이터이름':값
+		success: function(result) {
+			//ajax 실행 성공 후 실행할 코드 작성
+			alert('성공2');
+			var str = '';
+			for(var i = 0 ; i < result.length ; i++){
+				str += '<tr>';
+				str += '<th scope="row" id="stuNo' + i +'">' + result[i].stuNo + '</th>';
+				str += '<td>' + result[i].memberVO.memName + '</td>';
+				str += '<td>' + result[i].deptVO.collVO.collName + '</td>';
+				str += '<td>' + result[i].deptVO.deptName + '</td>';
+				str += '<td>' + result[i].stuYear + '</td>';
+				str += '<td>' + result[i].gradeList[0].grade + '</td>';
+				str += '<td><select id="' + ('selectGrade' + i) + '">'
+				str += '<option>미선택</option>'
+				str += '<option>A</option>'
+				str += '<option>B</option>'
+				str += '<option>C</option>'
+				str += '<option>D</option>'
+				str += '<option>E</option>'
+				str += '<option>F</option>'
+				str += '</select></td>'
+				str += '<td><button type="button" onclick="regGrade(' + i + ');">성적 변경</button></td>'
+				str += '</tr>';
+			}
+			document.getElementById('lecStuTbody').innerHTML = str;
+		},
+		error: function() {
+			//ajax 실행 실패 시 실행되는 구간
+			alert('실패');
+		}
+	});
+	
+	var modalTag = document.getElementById('lecStuModal');
+	var myModal = new bootstrap.Modal(modalTag);
+	myModal.show();
+	//myModal.hide();
+
+}
+
+
+function deleteLec(lecNo){
+	$.ajax({
+		url: '/pro/deleteLec',
+		type: 'post',
+		data: {'lecNo':lecNo},
+		success: function(result) {
+			if(result){
+				alert('삭제 완료!')
+				location.href="/pro/lecList";
+			}
+			else{
+				alert('이 강의는 삭제할 수 없습니다.');
+			}
+		},
+		error: function() {
+			alert('이 강의는 삭제할 수 없습니다.');
+		}
+	});
+}
+
+function lecDetail(lecNo) {
+	$.ajax({
+		url: '/pro/lecDetail', //요청경로
+		type: 'post',
+		data: { 'gradeList[0].lecNo': lecNo }, //필요한 데이터 '데이터이름':값
+		success: function(result) {
+
+			//result의 데이터로 모달창 화면을 구성한다.
+			var str = '';
+			var day = '';
+			var time = '';
+			for(var i = 0 ; i < result.timeList.length ; i++){
+				day += result.timeList[i].day;
+				if(result.timeList[i].firstTime == result.timeList[i].lastTime){
+					time += result.timeList[i].firstTime + ' 교시 ';
+				}
+				else{
+					time += result.timeList[i].firstTime + ' ~ ';
+					time += result.timeList[i].lastTime + ' 교시 ';
+				}
+			}
+			
+			str += '<tr>';
+			str += '<th scope="row">' + result.lecNo + '</th>';
+			str += '<td>' + result.lecName + '</td>'
+			str += '<td>' + result.lecScore + '</td>'
+			str += '<td>' + result.deptVO.collVO.collName + '</td>'
+			str += '<td>' + result.deptVO.deptName + '</td>'
+			str += '<td>' + result.empVO.memberVO.memName + '</td>'
+			str += '<td>' + result.maxNum + '</td>'
+			str += '<td>' + result.nowNum + '</td>'
+			str += '<td>' + day + ' / ' + time + '</td>';
+			str += '<td>' + result.lecMemo + '</td>';
+			str += '<td><button type="button">수정</button></td>'
+			str += '</tr>';
+			
+			document.getElementById('lecTbody').innerHTML = str;
+
+		},
+		error: function() {
+			alert('실패');
+
+		}
+	});
+	var modalTag = document.getElementById('lecModal');
+	var myModal = new bootstrap.Modal(modalTag);
+	myModal.show();
+
+}

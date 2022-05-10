@@ -1,0 +1,30 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>카테고리 관리 화면</title>
+</head>
+<body>
+	<div>
+		<select name="cateNo" class="form-select  d-inline-block w-auto" onchange="changeCate();">
+			<c:forEach items="${cateList}" var="category">
+				<option value="${category.cateNo}" label="${category.cateName}">${category.isUse}</option>
+			</c:forEach>
+		</select>
+		<input type="text" name="cateName" class="form-control d-inline-block w-50" >
+		<select name="isUse" class="form-select  d-inline-block w-auto">
+			<option value="Y">사용</option>
+			<option value="N">사용안함</option>
+		</select>
+		<button type="button" class="btn btn-dark" onclick="updateCate();">변경</button>
+	</div>
+	<div>
+		<input type="text" name="newCate" class="form-control d-inline-block w-50" placeholder="카테고리 이름을 입력하세요">
+		<button type="button" class="btn btn-dark" onclick="insertCate();">추가</button>
+	</div>
+<script type="text/javascript" src="/resources/js/board/category.js"></script>
+</body>
+</html>
