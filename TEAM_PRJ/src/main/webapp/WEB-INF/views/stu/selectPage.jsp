@@ -13,7 +13,7 @@
 <a href="/stu/myScore">내 성적 확인</a><br>
 <a href="/stu/academic">휴학 / 복학 신청</a><br>
 <a href="/stu/dropOut">자퇴 신청</a><br>
-<a href="/stu/deptApp">전과 / 복수 전공 신청</a><br>
+<a href="/stu/dept">전과 / 복수 전공 신청</a><br>
 <a href="/stu/regClassForm">수강 신청</a><br>
 로그인 학번 : ${sessionScope.loginInfo.stuNo}
 </body>

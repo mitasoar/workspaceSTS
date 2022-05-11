@@ -1,0 +1,169 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>게시글 목록 화면</title>
+</head>
+<body>
+	<table class="table text-center table-bordered">
+		<thead>
+			<tr>
+				<th scope="col" class="col-1">No</th>
+				<th scope="col" class="col-6">제목</th>
+				<th scope="col" class="col-2">글쓴이</th>
+				<th scope="col" class="col-2">작성일</th>
+				<th scope="col" class="col-1">조회수</th>
+			</tr>
+		</thead>
+		<tbody>
+			<c:if test="${not empty noticeList}">
+				<c:forEach items="${noticeList}" var="notice">
+					<tr class="bg-warning notice">
+						<td>공지사항</td>
+						<td scope="row" class="text-start">
+							<a class="text-reset text-decoration-none" href="/board/boardContent?boardNo=${notice.boardNo}">
+								${notice.boardTitle} (${notice.replyCnt})
+							<c:if test="${notice.fileCnt ne '0'}">
+								<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-folder-plus pb-1" viewBox="0 0 16 16">
+								  <path d="m.5 3 .04.87a1.99 1.99 0 0 0-.342 1.311l.637 7A2 2 0 0 0 2.826 14H9v-1H2.826a1 1 0 0 1-.995-.91l-.637-7A1 1 0 0 1 2.19 4h11.62a1 1 0 0 1 .996 1.09L14.54 8h1.005l.256-2.819A2 2 0 0 0 13.81 3H9.828a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 6.172 1H2.5a2 2 0 0 0-2 2zm5.672-1a1 1 0 0 1 .707.293L7.586 3H2.19c-.24 0-.47.042-.683.12L1.5 2.98a1 1 0 0 1 1-.98h3.672z"/>
+								  <path d="M13.5 10a.5.5 0 0 1 .5.5V12h1.5a.5.5 0 1 1 0 1H14v1.5a.5.5 0 1 1-1 0V13h-1.5a.5.5 0 0 1 0-1H13v-1.5a.5.5 0 0 1 .5-.5z"/>
+								</svg>
+							</c:if>
+							</a>
+						</td>
+						<td>${notice.member.memName}</td>
+						<c:if test="${empty notice.updateDate}">
+							<td>${notice.createDate}</td>
+						</c:if>
+						<c:if test="${not empty notice.updateDate}">
+							<td>${notice.updateDate}</td>
+						</c:if>
+						<td>${notice.readCnt}</td>
+					</tr>
+				</c:forEach>
+			</c:if>
+			<c:if test="${empty boardList}">
+				<tr>
+					<td colspan="5" class="text-center">게시판 글이 없습니다.</td>
+				</tr>
+			</c:if>
+			<c:if test="${not empty boardList}">
+				<c:forEach items="${boardList}" var="board">
+					<tr>
+						<td>${board.rn}</td>
+						<c:choose>
+							<c:when test="${board.isSecret eq 'Y' and loginInfo.memType ne 'admin' and loginInfo.memNo ne board.boardWriter}">
+								<td scope="row" class="text-start">
+									<a class="text-reset text-decoration-none" href="#" onclick="alert('비밀글 입니다.'); return false;">
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock" viewBox="0 0 16 16">
+										  <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/>
+										</svg>
+										해당 게시글은 작성자와 관리자만 확인 가능합니다.
+									</a>
+								</td>
+							</c:when>
+							<c:otherwise>
+								<td scope="row" class="text-start">
+									<a class="text-reset text-decoration-none" href="/board/boardContent?boardNo=${board.boardNo}">
+										${board.boardTitle} (${board.replyCnt})
+									<c:if test="${board.fileCnt ne '0'}">
+										<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-folder-plus" viewBox="0 0 16 16">
+										  <path d="m.5 3 .04.87a1.99 1.99 0 0 0-.342 1.311l.637 7A2 2 0 0 0 2.826 14H9v-1H2.826a1 1 0 0 1-.995-.91l-.637-7A1 1 0 0 1 2.19 4h11.62a1 1 0 0 1 .996 1.09L14.54 8h1.005l.256-2.819A2 2 0 0 0 13.81 3H9.828a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 6.172 1H2.5a2 2 0 0 0-2 2zm5.672-1a1 1 0 0 1 .707.293L7.586 3H2.19c-.24 0-.47.042-.683.12L1.5 2.98a1 1 0 0 1 1-.98h3.672z"/>
+										  <path d="M13.5 10a.5.5 0 0 1 .5.5V12h1.5a.5.5 0 1 1 0 1H14v1.5a.5.5 0 1 1-1 0V13h-1.5a.5.5 0 0 1 0-1H13v-1.5a.5.5 0 0 1 .5-.5z"/>
+										</svg>
+									</c:if>
+									</a>
+								</td>
+							</c:otherwise>
+						</c:choose>
+						
+						<td>${board.member.memName}</td>
+						<c:if test="${empty board.updateDate}">
+							<td>${board.createDate}</td>
+						</c:if>
+						<c:if test="${not empty board.updateDate}">
+							<td>${board.updateDate}</td>
+						</c:if>
+						<td>${board.readCnt}</td>
+					</tr>
+				</c:forEach>
+			</c:if>
+		</tbody>
+	</table>
+	<nav aria-label="Page navigation example">
+	  <ul class="pagination  justify-content-center">
+	  	<c:if test="${boardPage.paging.startPage != 1}">
+		    <li class="page-item">
+		      <a class="page-link link-secondary" href="/board/boardList?nowPage=${boardPage.paging.startPage - 1}&cateNo=${boardPage.cateNo}&boardTitle=${boardPage.boardTitle}&boardContent=${boardPage.boardContent}&boardWriter=${boardPage.boardWriter}&replyContent=${boardPage.reply.replyContent}&replyWriter=${boardPage.reply.replyWriter}" aria-label="Previous">
+		        <span aria-hidden="true">&laquo;</span>
+		      </a>
+		    </li>
+	    </c:if>
+	    <c:forEach begin="${boardPage.paging.startPage }" end="${boardPage.paging.endPage }" var="p">
+	   		<li class="page-item <c:if test="${p == boardPage.paging.nowPage}">active</c:if>" aria-current="page">
+      			<a class="page-link link-secondary" href="/board/boardList?nowPage=${p}&cateNo=${boardPage.cateNo}&boardTitle=${boardPage.boardTitle}&boardContent=${boardPage.boardContent}&boardWriter=${boardPage.boardWriter}&replyContent=${boardPage.reply.replyContent}&replyWriter=${boardPage.reply.replyWriter}">${p}</a>
+    		</li>
+		</c:forEach>
+	    <c:if test="${boardPage.paging.endPage != boardPage.paging.lastPage}">
+		    <li class="page-item">
+		      <a class="page-link link-secondary" href="/board/boardList?nowPage=${boardPage.paging.endPage + 1}&cateNo=${boardPage.cateNo}&boardTitle=${boardPage.boardTitle}&boardContent=${boardPage.boardContent}&boardWriter=${boardPage.boardWriter}&replyContent=${boardPage.reply.replyContent}&replyWriter=${boardPage.reply.replyWriter}" aria-label="Next">
+		        <span aria-hidden="true">&raquo;</span>
+		      </a>
+		    </li>
+	    </c:if>
+	  </ul>
+	</nav>
+	<nav class="navbar navbar-light">
+	  <div class="col-12">
+	    <form class="d-flex ps-5" id="searchForm">
+	    	<div class="form-check form-check-inline m-0 p-0 col-1">
+		   		<input type="checkbox" class="form-check-input" id="isSecret" name="isSecret" value="N" <c:if test="${boardPage.isSecret eq 'N'}">checked</c:if>>
+		   		<label class="form-check-label" for="isSecret">비밀글제외</label>
+	   		</div>
+	   		<div class="form-check form-check-inline m-0 p-0 col-2">
+		   		<select class="form-select" aria-label="Default select example" name="searchType" id="searchType">
+				  <option value="title&content" <c:if test="${not empty boardPage.boardTitle and not empty boardPage.boardContent}">selected</c:if>>제목 + 내용</option>
+				  <option value="title" <c:if test="${not empty boardPage.boardTitle and empty boardPage.boardContent}">selected</c:if>>제목</option>
+				  <option value="content" <c:if test="${empty boardPage.boardTitle and not empty boardPage.boardContent}">selected</c:if>>내용</option>
+				  <option value="writer" <c:if test="${not empty boardPage.boardWriter}">selected</c:if>>작성자</option>
+				  <option value="replyContent" <c:if test="${not empty boardPage.reply and not empty boardPage.reply.replyContent}">selected</c:if>>댓글내용</option>
+				  <option value="replyWriter" <c:if test="${not empty boardPage.reply and not empty boardPage.reply.replyWriter}">selected</c:if>>댓글작성자</option>
+				</select>
+			</div>
+			<div class="form-check form-check-inline m-0 p-0 col-8">
+	      		<input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="searchInput" id="searchInput" \
+	      		<c:choose>
+	      			<c:when test="${empty boardPage.reply}">
+	      				<c:if test="${not empty boardPage.boardTitle}">
+	      					value="${boardPage.boardTitle}"
+	      				</c:if>
+	      				<c:if test="${not empty boardPage.boardContent}">
+	      					value="${boardPage.boardContent}"
+	      				</c:if>
+	      				<c:if test="${not empty boardPage.boardWriter}">
+	      					value="${boardPage.boardWriter}"
+	      				</c:if>
+	      			</c:when>
+	      			<c:otherwise>
+		      			<c:if test="${not empty boardPage.reply.replyContent}">
+	      					value="${boardPage.reply.replyContent}"
+	      				</c:if>
+		      			<c:if test="${not empty boardPage.reply.replyWriter}">
+	      					value="${boardPage.reply.replyWriter}"
+	      				</c:if>
+	      			</c:otherwise>
+	      		</c:choose>>
+	      	</div>
+      		<div class="form-check form-check-inline m-0 p-0 col-1">
+      			<input type="hidden" name="cateNo" id="cateNo" value="${boardPage.cateNo}">
+	      		<button class="btn btn-outline-primary" type="button" onclick="searchBoard();">검색</button>
+	      	</div>
+	    </form>
+	  </div>
+	</nav>
+<script type="text/javascript" src="/resources/js/board/list.js"></script>
+</body>
+</html>

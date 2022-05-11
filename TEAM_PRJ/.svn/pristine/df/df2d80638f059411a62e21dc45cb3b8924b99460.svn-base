@@ -1,0 +1,23 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+a{
+	text-decoration: none;
+	color: black;
+}
+</style>
+</head>
+<body>
+<a href="/pro/regLecForm">강의 등록</a><br>
+<a href="/pro/schedule">강의 시간표</a><br>
+<a href="/pro/lecList">강의 목록</a><br>
+<a href="/pro/academicApp">휴복학 승인 및 거절</a><br>
+<a href="/pro/deptAppForm">전과, 복수전공 승인 및 거절</a><br>
+<a href="/pro/chart">차트</a><br>
+</body>
+</html>

@@ -1,0 +1,191 @@
+//단대 변경 시 ajax
+function collChangeAjax() {
+	var collNo = document.getElementById('coll').value;
+
+	$.ajax({
+		url: '/admin/collChangeAjax', 
+		type: 'get',
+		data: { 'collNo': collNo }, 
+		success: function(result) {
+			document.getElementById('dept').innerHTML = '';
+
+			var str = '<option value="">학과</option>';
+			for (var i = 0; i < result.length; i++) {
+				str += '<option value="' + result[i].deptNo + '">' + result[i].deptName + '</option>';
+			}
+
+			document.getElementById('dept').innerHTML = str;
+		},
+		error: function(request, error) {
+			alert('실패');
+			alert('code:' + request.status + '\n' + 'message:' + request.responseText + '\n' + 'error:' + error);
+		}
+	});
+}
+
+function dateChange(){
+	var applyDate = new Date(document.getElementById('applyDate').value);
+	var nowDate = new Date();
+	
+	if(applyDate < nowDate){
+		alert('날짜를 확인하세요')
+		document.getElementById('applyDate').value = null;
+	}
+}
+
+//신청버튼 클릭 시
+function apply(){
+	var applyType = document.getElementById('applyType').value;
+	var stuNo = document.getElementById('stuNo').value;
+	var deptNo = document.getElementById('dept').value;
+	var lastNo = document.getElementById('lastNo').value;
+	
+	if(applyType == ''){
+		alert('신청유형을 확인하세요');
+	}
+	else{
+		if(deptNo == ''){
+			alert('학과를 선택하세요');
+		}
+		else {
+			if (confirm(applyType + '신청하시겠습니까?')) {
+				$.ajax({
+					url: '/stu/deptAppAjax',
+					type: 'post',
+					data: {
+						'applyType': applyType,
+						'stuNo': stuNo,
+						'applyDept': deptNo
+					},
+					success: function(result) {
+						var str = '';
+						var str = '';
+
+						if (result[0] == null) {
+							str += '<tr>';
+							str += '<td colspan="10" align="center">전과 및 복수전공 신청 내역이 존재하지 않습니다.</td>';
+							str += '</tr>';
+						}
+						else {
+							for (var i = 0; i < result.length; i++) {
+
+								str += '<tr align="center">';
+								str += '<td>' + (result.length - i) + '</td>';
+								str += '<td>' + result[i].semesterVO.year + '</td>';
+								str += '<td>' + result[i].semesterVO.semester + '</td>';
+								str += '<td>' + result[i].applyType + '</td>';
+								str += '<td>' + result[i].applyCollName + ' ' + result[i].applyDeptName + '</td>';
+								str += '<td>' + result[i].applyDate + '</td>';
+								if (!result[i].oriDeptProcessDate) {
+									str += '<td>' + result[i].oriDeptProcessStatus + '</td>';
+								}
+								else {
+									str += '<td>' + result[i].oriDeptProcessDate + ' ' + result[i].oriDeptProcessStatus + '</td>';
+								}
+								if (!result[i].appDeptProcessDate) {
+									str += '<td>' + result[i].appDeptProcessStatus + '</td>';
+								}
+								else {
+									str += '<td>' + result[i].appDeptProcessDate + ' ' + result[i].appDeptProcessStatus + '</td>';
+								}
+
+								if (result[i].oriDeptProcessStatus == '미승인' || result[i].appDeptProcessStatus == '미승인') {
+									str += '<td>';
+									str += '<b>승인대기</b>';
+									str += '</td>';
+									str += '<td>';
+									str += '<input type="button" onclick="deleteDeptAppAjax(\'' + result.deptAppNo + '\', \'' + result.stuNo + '\');" value="취소" class="btn btn-secondary btn-sm">';
+									str += '</td>';
+								}
+								else {
+									str += '<td><b>승인완료</b></td>';
+									str += '<td>';
+									str += '<button type="button" class="btn btn-secondary btn-sm" disabled>불가</button>';
+									str += '</td>';
+									str += '</tr>';
+								}
+							}
+							if(lastNo == result[result.length - 1].deptAppNo){
+								alert(result[result.length - 1].applyType +'신청이 이미 존재합니다.')
+							}
+							else{
+								alert('신청이 완료되었습니다');
+							}
+						}
+						document.getElementById('listTbody').innerHTML = str;
+					},
+					error: function() {
+						alert('실패');
+					}
+				});
+			}
+		}
+	}
+}
+
+function deleteDeptAppAjax(deptAppNo, stuNo){
+	
+	if (confirm('신청을 취소하시겠습니까?')) {
+		$.ajax({
+			url: '/stu/deleteDeptAppAjax',
+			type: 'post',
+			data: {'deptAppNo': deptAppNo,
+					'stuNo': stuNo
+					}, 
+			success: function(result) {
+				var str = '';
+
+				if (result[0] == null) {
+					str += '<tr>';
+					str += '<td colspan="10" align="center">전과 및 복수전공 신청 내역이 존재하지 않습니다.</td>';
+					str += '</tr>';
+				}
+				else {
+					for (var i = 0; i < result.length; i++) {
+												
+						str += '<tr align="center">';
+						str += '<td>' + (result.length - i) + '</td>';
+						str += '<td>' + result[i].semesterVO.year + '</td>';
+						str += '<td>' + result[i].semesterVO.semester + '</td>';
+						str += '<td>' + result[i].applyType + '</td>';
+						str += '<td>' + result[i].applyCollName + ' ' + result[i].applyDeptName + '</td>';
+						str += '<td>' + result[i].applyDate + '</td>';
+						if(!result[i].oriDeptProcessDate){
+							str += '<td>' + result[i].oriDeptProcessStatus + '</td>';
+						}
+						else{
+							str += '<td>' + result[i].oriDeptProcessDate + ' ' + result[i].oriDeptProcessStatus + '</td>';
+						}
+						if(!result[i].appDeptProcessDate){
+							str += '<td>' + result[i].appDeptProcessStatus + '</td>';
+						}
+						else{
+							str += '<td>' + result[i].appDeptProcessDate + ' ' + result[i].appDeptProcessStatus + '</td>';
+						}
+						
+						if(result[i].oriDeptProcessStatus == '미승인' || result[i].appDeptProcessStatus == '미승인'){
+							str += '<td>';
+							str += '<b>승인대기</b>';
+							str += '</td>';
+							str += '<td>';
+							str += '<input type="button" onclick="deleteDeptAppAjax(\'' + result.deptAppNo + '\', \'' + result.stuNo + '\');" value="취소" class="btn btn-secondary btn-sm">';
+							str += '</td>';
+						}
+						else{
+							str += '<td><b>승인완료</b></td>';
+							str += '<td>';
+							str += '<button type="button" class="btn btn-secondary btn-sm" disabled>불가</button>';
+							str += '</td>';
+							str += '</tr>';
+						}
+					}
+				}
+				document.getElementById('listTbody').innerHTML = str;
+				alert('신청이 취소되었습니다.');
+			},
+			error: function() {
+				alert('실패');
+			}
+		});
+	}
+}

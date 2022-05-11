@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="adminMapper">
+	<!-- 학생 -->
+	<resultMap type="com.kh.teamprj.vo.StudentVO" id="student">
+		<id column="STU_NO" 		property="stuNo"/>
+		<result column="COLL_NO" 	property="collNo"/>
+		<result column="DEPT_NO" 	property="deptNo"/>
+		<result column="DOUBLE_NO" 	property="doubleNo"/>
+		<result column="STU_YEAR" 	property="stuYear"/>
+		<result column="STU_SEM" 	property="stuSem"/>
+		<result column="STU_STATUS" property="stuStatus"/>
+		<result column="MEM_NO" 	property="memNo"/>
+		<association property="deptVO" 	 resultMap="adminMapper.dept"/>
+		<association property="memberVO" resultMap="adminMapper.member"/>
+		<collection property="gradeList" resultMap="adminMapper.grade"/>
+	</resultMap>
+	<!-- 학과  -->
+	<resultMap type="com.kh.teamprj.vo.DeptVO" id="dept">
+		<id column="DEPT_NO" 		property="deptNo" />
+		<result column="DEPT_NAME" 	property="deptName" />
+		<result column="COLL_NO" 	property="collNo" />
+		<association property="collVO"  resultMap="adminMapper.coll"/>
+	</resultMap>
+	<!-- 단과대  -->
+	<resultMap type="com.kh.teamprj.vo.CollVO" id="coll">
+		<id column="COLL_NO" 		property="collNo" />
+		<result column="COLL_NAME" 	property="collName" />
+	</resultMap>
+	<!-- 회원  -->
+	<resultMap type="com.kh.teamprj.vo.MemberVO" id="member">
+		<id column="MEM_NO" 			property="memNo" />
+		<result column="MEM_PW" 		property="memPw" />
+		<result column="MEM_NAME" 		property="memName" />
+		<result column="MEM_EMAIL" 		property="memEmail" />
+		<result column="MEM_ADDR" 		property="memAddr" />
+		<result column="MEM_PHONE" 		property="memPhone" />
+		<result column="MEM_IMAGE" 		property="memImage" />
+		<result column="MEM_GENDER" 	property="memGender" />
+		<result column="MEM_BIRTH"		property="memBirth" />
+		<result column="MEM_TYPE" 		property="memType" />
+		<result column="IS_JOIN" 		property="isJoin" />
+		<result column="CREATE_DATE" 	property="createDate" />
+		<result column="WITHDRAW_DATE"	property="withdrawDate" />
+	</resultMap>
+	<!-- 성적 -->
+	<resultMap type="com.kh.teamprj.vo.GradeVO" id="grade">
+		<id column="GRADE_NO" property="gradeNo"/>
+		<result column="LEC_NO"		property="lecNo" />
+		<result column="GRADE"		property="grade" />
+		<result column="SCORE"		property="score" />
+		<result column="STU_NO"		property="stuNo" />
+		<result column="SEM_NO"		property="semNo" />
+	</resultMap>
+	<!-- 학사경고 -->
+	<resultMap type="com.kh.teamprj.vo.ProbationVO" id="probation">
+		<id column="PROB_NO" property="probNo"/>
+		<result column="STU_NO" property="stuNo"/>
+		<result column="PROB_DATE" property="probDate"/>
+		<result column="PROB_REASON" property="probReason"/>
+		<result column="SEM_NO" property="semNo"/>
+		<result column="MEM_NO" property="memNo"/>
+	</resultMap>
+	
+	<!-- 학생 검색 -->
+	<select id="searchStudentList" resultMap="student">
+		SELECT S.STU_NO
+		    , C.COLL_NAME
+		    , D.DEPT_NAME
+		    , DOUBLE_NO
+		    , STU_YEAR
+		    , STU_SEM
+		    , STU_STATUS
+		    , S.MEM_NO
+		    , MEM_NAME
+		    , MEM_EMAIL
+		    , GRADE
+		    , SCORE
+		    , LEC_NAME
+		FROM STUDENT S, DEPT D, COLLEGE C, MEMBER M
+			, STU_GRADE G, LEC L
+		WHERE S.DEPT_NO = D.DEPT_NO
+		AND D.COLL_NO = C.COLL_NO
+		AND S.MEM_NO = M.MEM_NO
+		AND S.STU_NO = G.STU_NO(+)
+		AND G.LEC_NO(+) = L.LEC_NO
+		<!-- 검색을 위한 조건 -->
+		<if test="collNo != null and collNo != ''">
+		AND S.COLL_NO = #{collNo}
+		</if>
+		<if test="stuYear != 0">
+		AND S.STU_YEAR = #{stuYear}
+		</if>
+		<if test="deptNo != null and deptNo != ''">
+		AND S.DEPT_NO = #{deptNo}
+		</if>
+		<if test="stuStatus != null and stuStatus != ''">
+		AND S.STU_STATUS = #{stuStatus}
+		</if>
+		<if test="memberVO != null">
+			<if test="memberVO.memName != null and memberVO.memName != ''">
+			AND M.MEM_NAME LIKE '%' || #{memberVO.memName} || '%'
+			</if>
+		</if>
+		<if test="gradeList != null">
+			<if test="gradeList[0].lecNo != null and gradeList[0].lecNo != ''">
+			AND G.LEC_NO = #{gradeList[0].lecNo}
+			</if>
+		</if>
+		ORDER BY STU_NO DESC
+	</select>
+	
+	<!-- 단과대 조회 -->
+	<select id="selectCollList" resultMap="coll">
+		SELECT COLL_NO
+			, COLL_NAME 
+		FROM COLLEGE
+	</select>
+	<!-- 학과 조회 -->
+	<select id="selectDeptList" resultMap="dept">
+		SELECT DEPT_NO
+			, DEPT_NAME
+			, COLL_NO
+		FROM DEPT
+	</select>
+	<!-- 학과 조회 -->
+	<select id="selectDeptListWithCollNo" resultMap="dept">
+		SELECT DEPT_NO
+			, DEPT_NAME
+			, COLL_NO
+		FROM DEPT
+		<if test="collNo != null and collNo != ''">
+		WHERE COLL_NO = #{collNo}
+		</if>
+	</select>
+	
+	<!-- 강의 검색 -->
+	<select id="searchLecList" resultMap="professorMapper.lec">		
+		SELECT LEC_NO 
+		    , LEC_NAME 
+		    , LEC_SCORE
+		    , L.COLL_NO 
+		    , L.DEPT_NO 
+		    , EMP_NO
+		    , CREATE_DATE  
+		    , MAX_NUM 
+		    , NOW_NUM 
+		    , SEM_NO
+		    , LEC_CLOSE
+		    , COLL_NAME
+		    , DEPT_NAME
+		FROM LEC L, COLLEGE C, DEPT D
+		WHERE L.COLL_NO = C.COLL_NO
+		AND L.DEPT_NO = D.DEPT_NO
+		<!-- 검색을 위한 조건 -->
+		<if test="collNo != null and collNo != ''">
+		AND L.COLL_NO = #{collNo}
+		</if>
+		<if test="deptNo != null and deptNo != ''">
+		AND L.DEPT_NO = #{deptNo}
+		</if>
+		<if test="lecName != null and lecName != ''">
+		AND LEC_NAME LIKE  '%' ||  #{lecName} || '%'
+		</if>
+		ORDER BY LEC_NO
+	</select>
+	<!-- 강의 상세 조회(성적테이블 조회) -->
+	<select id="selectLecDetail" resultMap="professorMapper.grade">
+		SELECT S.STU_NO
+			, MEM_NAME
+			, GRADE
+			, COLL_NAME
+			, DEPT_NAME
+		FROM STUDENT S
+			, STU_GRADE G
+			, MEMBER M
+			, COLLEGE C
+			, DEPT D
+		WHERE S.STU_NO = G.STU_NO
+		AND S.MEM_NO = M.MEM_NO
+		AND S.COLL_NO = C.COLL_NO
+		AND S.DEPT_NO = D.DEPT_NO
+		AND G.LEC_NO = #{lecNo}
+	</select>
+	<!-- 학생 상세 정보 조회 -->
+	<select id="selectStudentDetail" resultMap="student">
+		SELECT MEM_IMAGE
+			, M.MEM_NO
+			, MEM_NAME
+			, STU_NO
+			, MEM_GENDER
+			, STU_YEAR
+			, STU_STATUS
+			, COLL_NAME
+			, DEPT_NAME
+			, MEM_BIRTH
+			, MEM_PHONE
+			, MEM_ADDR
+			, DOUBLE_NO
+		FROM STUDENT S, MEMBER M, DEPT D, COLLEGE C
+		WHERE S.MEM_NO = M.MEM_NO
+		AND S.DEPT_NO = D.DEPT_NO
+		AND D.COLL_NO = C.COLL_NO
+		AND STU_NO = #{stuNo}
+	</select>
+	<!-- 연도와 학기로 학기정보 조회 -->
+	<select id="selectSem" resultMap="professorMapper.sem">
+		SELECT SEM_NO
+			, YEAR
+			, SEMESTER
+			, SEM_NAME
+		FROM SEMESTER
+		WHERE YEAR = #{year} AND SEMESTER = #{semester}
+	</select>
+	<!-- 학사경고 insert -->
+	<insert id="insertProbation">
+		INSERT INTO PROBATION (
+		     PROB_NO    
+		    , STU_NO    
+		    , PROB_REASON
+		    , SEM_NO     
+		    , MEM_NO     
+		) VALUES (
+		    CONCAT('PROB_', (SELECT NVL(MAX(TO_NUMBER(SUBSTR(PROB_NO, 6))), 0) + 1 FROM PROBATION))
+		    , #{stuNo}
+		    , #{probReason}
+		    , #{semNo}
+		    , (SELECT MEM_NO FROM STUDENT WHERE STU_NO = #{stuNo})
+		)
+	</insert>
+	<!-- 학생의 학사경고내역목록 조회 -->
+	<select id="selectProbationList" resultMap="probation">
+		SELECT PROB_NO
+			, STU_NO
+			, TO_CHAR(PROB_DATE, 'YYYY/MM/DD') AS PROB_DATE
+			, PROB_REASON
+			, SEM_NO
+			, MEM_NO
+		FROM PROBATION
+		WHERE STU_NO = #{stuNo}
+		ORDER BY PROB_DATE DESC
+	</select>
+	<!-- 학적변동신청리스트 조회 -->
+	<select id="selectAcademicAppList" resultMap="studentMapper.academicApp">
+		SELECT A.APP_NO
+			, A.STU_NO
+			, M.MEM_NAME
+			, S.STU_STATUS
+			, A.APPLY_TYPE
+			, TO_CHAR(A.APPLY_DATE, 'YYYY-MM-DD') AS APPLY_DATE
+			, A.PROF_PROCESS_STATUS
+			, TO_CHAR(A.PROF_PROCESS_DATE, 'YYYY-MM-DD') AS PROF_PROCESS_DATE
+			, A.ADMIN_PROCESS_STATUS
+			, TO_CHAR(A.ADMIN_PROCESS_DATE, 'YYYY-MM-DD HH:MI') AS ADMIN_PROCESS_DATE
+		FROM ACADEMIC_APP A, STUDENT S, MEMBER M
+		WHERE A.STU_NO = S.STU_NO
+		AND S.MEM_NO = M.MEM_NO
+		ORDER BY ADMIN_PROCESS_STATUS,
+			PROF_PROCESS_STATUS DESC,
+			APP_NO DESC
+	</select>
+	<!-- 학적변동승인 - 최종승인 - ACADEMIC_APP의 ADMIN_PROCESS_STATUS와 DATE 변경(승인완료, 미승인 등) -->
+	<update id="approveAcademicApp">
+		UPDATE ACADEMIC_APP 
+		SET ADMIN_PROCESS_STATUS = '승인완료'
+			, ADMIN_PROCESS_DATE = SYSDATE
+		WHERE APP_NO = #{appNo}
+	</update>
+	<!-- 학적변동승인 - 최종승인 -STUDENT의 STU_STATUS 변경(휴학, 복학 등) -->
+	<update id="updateStuStatus">
+		UPDATE STUDENT
+		SET STU_STATUS = #{stuStatus}
+		WHERE STU_NO = #{stuNo}
+	</update>
+	<!-- 학적변동 후 데이터 가져오기 -->
+	<select id="selectAcademicApp" resultMap="studentMapper.academicApp">
+		SELECT TO_CHAR(ADMIN_PROCESS_DATE, 'YYYY-MM-DD HH:MI') AS ADMIN_PROCESS_DATE
+		FROM ACADEMIC_APP
+		WHERE APP_NO = #{appNo}
+	</select>
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+

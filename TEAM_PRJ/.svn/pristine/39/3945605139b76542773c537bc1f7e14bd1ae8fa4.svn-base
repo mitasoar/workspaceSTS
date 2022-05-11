@@ -1,0 +1,75 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<div class="container">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>
+						<input id="check" type="checkbox" class="form-check-input" onclick="checkAll();">
+					</th>
+					<th>No</th>
+					<th>학번</th>
+					<th>이름</th>
+					<th>신청</th>
+					<th>신청일</th>
+					<th>기존학과</th>
+					<th>변경학과</th>
+					<th>기존학과 승인</th>
+					<th>승인일</th>
+					<th>변경학과 승인</th>
+					<th>승인일</th>
+					<th>승인</th>
+				</tr>
+			</thead>
+			<tbody>
+				<c:forEach items="${deptAppList }" var="deptApp">
+					<tr>
+						<td>
+							<input type="checkbox" class="form-check-input chk" value="${deptApp.deptAppNo }">
+						</td>
+						<td>${deptApp.deptAppNo }</td>
+						<td>${deptApp.stuNo }</td>
+						<td>${deptApp.studentVO.memberVO.memName }</td>
+						<td>${deptApp.applyType }</td>
+						<td>${deptApp.applyDate }</td>
+						<td>${deptApp.originalDept }</td>
+						<td>${deptApp.applyDept }</td>
+						<td>${deptApp.oriDeptProcessStatus }</td>
+						<td>${deptApp.oriDeptProcessDate }</td>
+						<td>${deptApp.appDeptProcessStatus }</td>
+						<td>${deptApp.appDeptProcessDate }</td>
+						<td>
+							<form action="/pro/updateDeptApp" method="post">
+								<input type="hidden" value="${deptApp.deptAppNo }" name="deptAppNo">
+								<c:choose>
+									<c:when test="${deptApp.originalDept eq empVO.deptNo }"> <!-- 기존학과와 로그인한 dpetNo가 같을시 -->
+										<input type="hidden" value="${deptApp.originalDept }" name="originalDept">
+										<input type="radio" name="oriDeptProcessStatus" value="승인거절" onclick="reject(this);"> 승인거절
+										<input type="radio" name="oriDeptProcessStatus" value="승인완료" onclick="appr(this);"> 승인완료
+									</c:when>
+									<c:otherwise>
+										<input type="hidden" value="${deptApp.applyDept }" name="applyDept">
+										<input type="radio" name="appDeptProcessStatus" value="승인거절" onclick="reject(this);"> 승인거절
+										<input type="radio" name="appDeptProcessStatus" value="승인완료" onclick="appr(this);"> 승인완료
+									</c:otherwise>
+								</c:choose>
+							</form>
+						</td>
+					</tr>
+				</c:forEach>
+			</tbody>
+		</table>
+	<button type="button" onclick="apprs('승인거절');">일괄거절</button>
+	<button type="button" onclick="apprs('승인완료');">일괄승인</button>
+</div>
+<script type="text/javascript" src="/resources/js/professor/dept_app.js?ver=3"></script>
+</body>
+</html>
