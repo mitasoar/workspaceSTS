@@ -1,0 +1,149 @@
+$.ajax({
+	url: '/pro/lecSchedule',
+	type: 'post',
+	data: {},
+	success: function(result) {
+		var colorArr = [];
+		colorArr[0] = "#F08677";
+		colorArr[1] = "#FBAA68";
+		colorArr[2] = "#ECC369";
+		colorArr[3] = "#A7C970";
+		colorArr[4] = "#7DD1C1";
+		colorArr[5] = "#7BA5E9";
+		colorArr[6] = "#9F86E1";
+		colorArr[7] = "#D397ED";
+		colorArr[8] = "#FFCFBE";
+		colorArr[9] = "#FBF0F0";
+		
+		for (var i = 0; i < result.length ; i++) {
+			result[i].color = colorArr[i];
+		}
+
+		for (var i = 0; i < result.length ; i++) {
+			var num1 = -1;
+			var num2 = -1;
+			for (var j = 0; j < result.length ; j++) {
+				if (result[i].lecNo == result[j].lecNo) {
+					num1 = i;
+					num2 = j;
+				}
+			}
+			if (num1 != -1 && num2 != -1 && num1 != num2) {
+				result[num1].color = colorArr[num1];
+				result[num2].color = colorArr[num1];
+			}
+
+		}
+		
+		for(var i = 0 ; i < result.length ; i++){
+			if(result[i].day == '화'){
+				for(var j = 1 ; j < 9 ; j++){
+					if(result[i].firstTime == j){
+						var selectedTd = document.querySelector('#tr' + j +' td:nth-child(3)');
+						
+						selectedTd.innerHTML = result[i].lecName;
+						selectedTd.style.backgroundColor = result[i].color;
+						selectedTd.rowSpan = result[i].lastTime - result[i].firstTime + 1;
+						
+						for(var k = (result[i].firstTime + 1) ; k <= result[i].lastTime ; k++){
+							document.querySelector('#tr' + k +' td:nth-child(2)').remove();
+						}
+						break;
+					}
+					
+				}
+			}
+			if(result[i].day == '수'){
+				for(var j = 1 ; j < 9 ; j++){
+					if(result[i].firstTime == j){
+						var selectedTd = document.querySelector('#tr' + j +' td:nth-child(4)');
+						
+						selectedTd.innerHTML = result[i].lecName;
+						selectedTd.style.backgroundColor = result[i].color;
+						selectedTd.rowSpan = result[i].lastTime - result[i].firstTime + 1;
+						
+						for(var k = (result[i].firstTime + 1) ; k <= result[i].lastTime ; k++){
+							document.querySelector('#tr' + k +' td:nth-child(2)').remove();
+						}
+						break;
+					}
+					
+				}
+			}
+			if(result[i].day == '목'){
+				for(var j = 1 ; j < 9 ; j++){
+					if(result[i].firstTime == j){
+						var selectedTd = document.querySelector('#tr' + j +' td:nth-child(5)');
+						
+						selectedTd.innerHTML = result[i].lecName;
+						selectedTd.style.backgroundColor = result[i].color;
+						selectedTd.rowSpan = result[i].lastTime - result[i].firstTime + 1;
+						
+						for(var k = (result[i].firstTime + 1) ; k <= result[i].lastTime ; k++){
+							document.querySelector('#tr' + k +' td:nth-child(2)').remove();
+						}
+						break;
+					}
+					
+				}
+			}
+			if(result[i].day == '금'){
+				for(var j = 1 ; j < 9 ; j++){
+					if(result[i].firstTime == j){
+						var selectedTd = document.querySelector('#tr' + j +' td:nth-child(6)');
+						
+						selectedTd.innerHTML = result[i].lecName;
+						selectedTd.style.backgroundColor = result[i].color;
+						selectedTd.rowSpan = result[i].lastTime - result[i].firstTime + 1;
+						
+						for(var k = (result[i].firstTime + 1) ; k <= result[i].lastTime ; k++){
+							document.querySelector('#tr' + k +' td:nth-child(2)').remove();
+						}
+						break;
+					}
+					
+				}
+			}
+			
+		}
+		for(var i = 0 ; i < result.length ; i++){
+			if(result[i].day == '월'){
+				for(var j = 1 ; j < 9 ; j++){
+					if(result[i].firstTime == j){
+						var selectedTd = document.querySelector('#tr' + j +' td:nth-child(2)');
+						
+						selectedTd.innerHTML = result[i].lecName;
+						selectedTd.style.backgroundColor = result[i].color;
+						selectedTd.rowSpan = result[i].lastTime - result[i].firstTime + 1;
+						
+						for(var k = (result[i].firstTime + 1) ; k <= result[i].lastTime ; k++){
+							document.querySelector('#tr' + k +' td:nth-child(2)').remove();
+						}
+						break;
+					}
+					
+				}
+			}
+		}
+	},
+	error: function() {
+		//ajax 실행 실패 시 실행되는 구간
+		alert('실패');
+	}
+});
+
+function createPdf() {
+	document.getElementById('butSpan').innerHTML = '';
+
+	//pdf_wrap을 canvas객체로 변환
+	html2canvas($('#pdfDiv')[0]).then(function(canvas) {
+		var doc = new jsPDF('p', 'mm', 'a4'); //jspdf객체 생성
+		var imgData = canvas.toDataURL('image/png'); //캔버스를 이미지로 변환
+		doc.addImage(imgData, 'PNG', 10, 10, 220, 150); //이미지를 기반으로 pdf생성
+		doc.save('sample-file.pdf'); //pdf저장
+	})
+	
+	document.getElementById('butSpan').innerHTML = '<button style="margin-left: 900px;" type="button" class="btn btn-secondary" onclick="createPdf();">PDF 다운</button>';
+}
+
+	

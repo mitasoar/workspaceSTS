@@ -1,0 +1,56 @@
+function searchMember() {
+	let memType = document.getElementById('searchMemType').value; // 회원 유형
+	let searchType = document.getElementById('searchType').value; // 검색 유형
+	let searchInput = document.getElementById('searchInput').value; // 검색 내용
+	let searchHref = '/member/memList'; // 검색 주소 값
+	
+	if (memType == 'stu') { // 학생
+		searchHref += '?memType=' + memType;
+	} else if (memType == 'admin') { // 관리자
+		searchHref += '?memType=' + memType;
+	} else if (memType == 'emp') { // 학사팀
+		searchHref += '?empType=' + memType;
+	} else if (memType == 'pro') { // 교수
+		searchHref += '?empType=' + memType;
+	}
+	
+	if (searchType == 'name') { // 이름
+		searchHref += '&memName=' + searchInput;
+	}
+	
+	if (document.getElementById('isJoin').checked) { // 탈퇴회원 제외
+		searchHref += '&isJoin=' + document.getElementById('isJoin').value;
+	}
+	
+	location.href = searchHref;
+	
+	return false;
+}
+
+function selectMemberDetail(memNo) {
+	document.getElementById('memberModalTitle').innerHTML = '회원정보 (' + memNo + ')';
+	
+	$.ajax({ // 삭제 ajax
+		url: "/member/memDetail",
+		type: "POST",
+		data: {memNo: memNo.split('(')[0]},
+		success: function(data) {
+			let img = '<img alt="' + data.memName + '" src="/resources/images/' + data.memImage + '" class="memImg">';
+			
+			document.getElementById('memImage').innerHTML = img; // 회원번호(아이디)
+			document.getElementById('memNo').innerHTML = data.memNo; // 회원번호(아이디)
+			document.getElementById('memName').innerHTML = data.memName; // 이름
+			document.getElementById('memEmail').innerHTML = data.memEmail; // 이메일
+			document.getElementById('memAddr').innerHTML = data.memAddr; // 주소
+			document.getElementById('memPhone').innerHTML = data.memPhone; // 연락처
+			document.getElementById('memGender').innerHTML = data.memGender; // 성별
+			document.getElementById('memBirth').innerHTML = data.memBirth; // 생일
+			document.getElementById('memType').innerHTML = data.memType; // 직책
+			document.getElementById('createDate').innerHTML = data.createDate; // 가입날짜
+			document.getElementById('withdrawDate').innerHTML = data.withdrawDate; // 탈퇴날짜
+		},
+		error: function() {
+			alert('회원정보 조회를 실패하였습니다.. 확인 후 다시 시도해주세요');
+		}
+	})
+}

@@ -1,0 +1,38 @@
+#msgDiv .card:hover {
+	background-color: #EEEEEE;
+}
+
+#msgDiv {
+	height: 660px;
+	overflow: auto;
+}
+
+#msgBody {
+	height: 500px;
+	overflow: auto;
+}
+
+#searchList {
+	max-height: 50px;
+	max-width: 400px;
+}
+
+.card-header, .card-footer {
+	background-color: white;
+}
+
+.card-body {
+	padding-bottom: 2%;
+}
+
+.max-w-75 {
+	max-width: 75%;
+}
+
+.bg-myTalk {
+	background-color: #FFEB33; 
+}
+
+.bg-yourTalk {
+	background-color: #E9EFC0; 
+}
