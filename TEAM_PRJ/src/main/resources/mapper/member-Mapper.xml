@@ -149,8 +149,7 @@
 		ON M.MEM_NO = S.MEM_NO
 		LEFT OUTER JOIN EMP E
 		ON M.MEM_NO = E.MEM_NO
-		WHERE M.IS_JOIN = 'Y'
-		AND M.MEM_EMAIL = #{email}
+		WHERE M.MEM_EMAIL = #{email}
 	</select>
 	
 	<!-- 연락처 확인 -->
@@ -162,8 +161,7 @@
 		ON M.MEM_NO = S.MEM_NO
 		LEFT OUTER JOIN EMP E
 		ON M.MEM_NO = E.MEM_NO
-		WHERE M.IS_JOIN = 'Y'
-		AND M.MEM_PHONE = #{phone}
+		WHERE M.MEM_PHONE = #{phone}
 	</select>
 	
 	<!-- 회원가입 후 발급되는 아이디 -->
@@ -249,7 +247,7 @@
 	<update id="updateWithdrawList">
 		UPDATE MEMBER
 		SET IS_JOIN = 'N'
-			, WITHDRAW_DATE = SYSDATE
+			, WITHDRAW_DATE = CURRENT_DATE
 		WHERE MEM_NO IN 
 		<foreach collection="array" item="memNo" separator="," open="(" close=")">
            	'${memNo}'
@@ -260,7 +258,7 @@
 	<update id="updateRejoinList">
 		UPDATE MEMBER
 		SET IS_JOIN = 'Y'
-			, CREATE_DATE = SYSDATE
+			, CREATE_DATE = CURRENT_DATE
 			, WITHDRAW_DATE = null
 		WHERE MEM_NO IN 
 		<foreach collection="array" item="memNo" separator="," open="(" close=")">
@@ -299,7 +297,7 @@
 			, #{collNo}
 			, #{deptNo})
 		</if>
-		<if test="memType.equals('emp')"> <!-- 직원 등록인 경우 -->
+		<if test="empType.equals('pro')"> <!-- 직원 등록인 경우 -->
 		INTO EMP (EMP_NO, MEM_NO, COLL_NO, DEPT_NO, EMP_TYPE)
 		VALUES ((SELECT 'EMP_' || TO_CHAR(NVL(MAX(TO_NUMBER(SUBSTR(EMP_NO, 5))), 0) + 1) FROM EMP)
 			, (SELECT 'MEM_' || TO_CHAR(NVL(MAX(TO_NUMBER(SUBSTR(MEM_NO, 5))), 0) + 1) FROM MEMBER)

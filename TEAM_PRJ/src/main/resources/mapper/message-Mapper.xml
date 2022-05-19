@@ -96,7 +96,7 @@
 			FROM MESSAGE
 			WHERE TO_USER = #{toUser} AND FROM_USER = #{fromUser}
 		) A
-		SET A.READ_TIME = SYSDATE
+		SET A.READ_TIME = CURRENT_DATE
 	</update>
 
 </mapper>

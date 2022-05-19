@@ -21,12 +21,12 @@
 				<option value="Y">사용</option>
 				<option value="N">사용안함</option>
 			</select>
-			<button type="button" class="btn btn-dark" onclick="updateCate();">변경</button>
+			<button type="button" class="btn btn-primary" onclick="updateCate();">변경</button>
 		</div>
 		<div class="mb-3 text-center">
 			<h5 class="mb-3">게시판 카테고리 추가</h5>
 			<input type="text" name="newCate" class="form-control d-inline-block w-75" placeholder="카테고리 이름을 입력하세요">
-			<button type="button" class="btn btn-dark" onclick="insertCate();">추가</button>
+			<button type="button" class="btn btn-primary" onclick="insertCate();">추가</button>
 		</div>
 		<div class="text-center">
 			<h5 class="mb-3">게시판 카테고리 목록</h5>

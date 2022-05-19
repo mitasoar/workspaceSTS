@@ -12,13 +12,31 @@
 	height: 300px;
 	margin-bottom: 10px;
 }
+
 .list-container h5, .list-container p {
 	margin-bottom: 0;
 	height: 30px;
 	line-height: normal;
 }
+
 .btn-white:hover {
 	background-color: #EEEEEE;
+}
+
+.link-primary {
+	color: #214099 !important;
+}
+
+.link-success {
+	color: #198754 !important;
+}
+
+.link-danger {
+	color: #dc3545 !important;
+}
+
+.btn-primary {
+	color: #214099 !important;
 }
 </style>
 </head>
@@ -33,12 +51,19 @@
 						<input type="hidden" id="loginId" value="${loginInfo.memNo}"/>
 						<input type="hidden" id="loginType" value="${loginInfo.memType}"/>
 					
-						<h5 class="col-6">${board.cateName}</h5>
+						<h5 class="col-6 fw-bold">${board.cateName}</h5>
 						<p class="col-3 text-end">작성자 : ${board.member.memName}</p>
 						<p class="col-3 text-end">조회수 : ${board.readCnt}</p>
 					</div>
 					<div class="row border-bottom pt-2 pb-2">
-						<h5 class="col-8 board-title" style="word-break: break-all;">${board.boardTitle}</h5>
+						<h5 class="col-8 board-title" style="word-break: break-all;">
+						<c:if test="${board.isSecret eq 'Y'}">
+							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock" viewBox="0 0 16 16">
+							  <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/>
+							</svg>
+						</c:if>
+							${board.boardTitle}
+						</h5>
 						<c:if test="${empty board.updateDate}">
 							<p class="col-4 text-end">${board.createDate}</p>
 						</c:if>
@@ -47,12 +72,12 @@
 						</c:if>
 					</div>
 				</div>
-				<div class="board-container border-bottom p-1">
+				<div class="board-container p-2">
 					<p class="content" style="word-break: break-all;">${board.boardContent}</p>
 				</div>
 				
 				<c:forEach items="${boardPage.fileInfos}" var="file">
-                    <div>
+                    <div class="ps-2 pb-2">
                      	<c:set var="fileType" value="${fn:split(file.saveFile, '.')[1]}" />
 	                    <c:if test="${fileType eq 'jpg' or fileType eq 'jpeg' or fileType eq 'png'}">
 	                    	<img alt="${file.originFile}" src="/resources/upload/${file.saveFolder}/${file.saveFile}" width="100">
@@ -60,8 +85,8 @@
 	                    <c:if test="${fileType ne 'jpg' and fileType ne 'jpeg' and fileType ne 'png'}">
 	                    	<img alt="${file.originFile}" src="/resources/images/no_image.jpg" width="100">
 	                    </c:if>
-                    	<span>${file.originFile}</span>
-	                    <a href="#" class="filedown" sfolder="${file.saveFolder}" sfile="${file.saveFile}" ofile="${file.originFile}">[다운로드]</a>
+                    	<span class="ms-1">${file.originFile}</span>
+	                    <a href="#" class="filedown text-decoration-none" sfolder="${file.saveFolder}" sfile="${file.saveFile}" ofile="${file.originFile}">[다운로드]</a>
                     </div>
                 </c:forEach>
                 
@@ -71,7 +96,7 @@
                 	<input type="hidden" name="sfile">
                 </form>
 
-				<div class="board-footer text-end pb-1 ps-2 pe-2 mb-2 border-bottom">
+				<div class="board-footer text-end pb-1 pt-2 ps-2 pe-2 mb-2 border-bottom border-top">
 					<c:if test="${board.boardWriter eq loginInfo.memNo or loginInfo.memType eq 'admin'}">
 						<button type="button" class="btn btn-white update-btn" onclick="location.href='/board/editBoard?boardNo=${board.boardNo}'">수정</button>
 						<button type="button" class="btn btn-white delete-btn" onclick="deleteBoard('${board.boardNo}');">삭제</button>
@@ -85,12 +110,12 @@
 	<c:if test="${not empty loginInfo}">
 		<!--  댓글  -->
 	    <div class="container col-7 mx-auto">
-	        <label for="content" class="p-2">댓글</label>
+	        <label for="content" class="p-1 fs-5">댓글</label>
 	        <form name="commentInsertForm">
 	            <div class="input-group">
 	               <input type="hidden" name="boardNo" value="${board.boardNo}"/>
 	               <input type="hidden" name="replyWriter" id="replyWriter" value="${loginInfo.memNo}"/>
-	               <div class="form-check form-switch pt-1">
+	               <div class="form-check form-switch pt-2">
 					  <input class="form-check-input" type="checkbox" role="switch" id="isSecret" name="isSecret" value="Y">
 					  <label class="form-check-label me-2" for="isSecret">비밀댓글</label>
 					</div>

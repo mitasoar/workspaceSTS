@@ -1,6 +1,5 @@
 package com.kh.teamprj.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.kh.teamprj.vo.AcademicAppVO;
@@ -46,8 +45,6 @@ public interface AdminService {
 	String selectNextAppNo();
 	//최종승인 - ACADEMIC_APP의 ADMIN_PROCESS_STATUS와 DATE 변경(승인완료, 미승인 등)
 	void approveAcademicApp(AcademicAppVO academicAppVO);
-	//다중승인 - ACADEMIC_APP의 ADMIN_PROCESS_STATUS와 DATE 변경(승인완료, 미승인 등)
-	void multiApproveAcademicApp(ArrayList<String> appNoList);
 	//최종승인 -STUDENT의 STU_STATUS 변경(휴학, 복학 등)
 	void updateStuStatus(StudentVO studentVO);
 	//승인된 신청을 리턴

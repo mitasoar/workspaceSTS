@@ -63,7 +63,7 @@
 			</div>
 			<div class="col-md-2">
 				<label for="" class="form-label">&nbsp;</label> 
-				<button type="button" class="btn btn-dark form-control" onclick="checkEmail();">메일인증</button>
+				<button type="button" class="btn btn-outline-primary form-control" onclick="checkEmail();">메일인증</button>
 			</div>
 			<div class="col-md-1">
 				<label for="" class="form-label">&nbsp;</label> 
@@ -91,7 +91,7 @@
 			</div>
 			<div class="col-md-2">
 				<label for="" class="form-label">&nbsp;</label> 
-				<button type="button" class="btn btn-dark form-control" onclick="checkPhone();">번호인증</button>
+				<button type="button" class="btn btn-outline-primary form-control" onclick="checkPhone();">번호인증</button>
 			</div>
 			<div class="col-md-1">
 				<label for="" class="form-label">&nbsp;</label> 
@@ -109,7 +109,7 @@
 			</div>
 			<div class="col-4 d-grid">
 				<label for="" class="form-label">&nbsp;</label>
-				<button type="button" class="btn btn-dark" onclick="execDaumPostcode();">우편번호</button>
+				<button type="button" class="btn btn-outline-primary" onclick="execDaumPostcode();">우편번호</button>
 			</div>
 			<div class="col-12">
 				<input type="text" class="form-control" id="inputAddress" placeholder="상세주소" autocomplete="none" name="memAddr" required>
@@ -153,7 +153,7 @@
 				<a href="javascript:void(0);" class="dellink" style="display: none;">썸네일삭제</a>
 			</div>
 			<div class="col-12 text-center">
-				<button type="submit" class="btn btn-dark w-25">회원등록</button>
+				<button type="submit" class="btn btn-primary w-25">회원등록</button>
 			</div>
 		</form>
 	<!-- 외부 script -->
@@ -175,7 +175,7 @@
 			</div>
 			<div class="col-md-2">
 				<label for="" class="form-label">&nbsp;</label> 
-				<button type="button" class="btn btn-dark form-control" onclick="checkEmail();">메일인증</button>
+				<button type="button" class="btn btn-outline-primary form-control" onclick="checkEmail();">메일인증</button>
 			</div>
 			<div class="col-md-1">
 				<label for="" class="form-label">&nbsp;</label> 
@@ -209,7 +209,7 @@
 			</div>
 			<div class="col-md-2">
 				<label for="" class="form-label">&nbsp;</label> 
-				<button type="button" class="btn btn-dark form-control" onclick="checkPhone();">번호인증</button>
+				<button type="button" class="btn btn-outline-primary form-control" onclick="checkPhone();">번호인증</button>
 			</div>
 			<div class="col-md-1">
 				<label for="" class="form-label">&nbsp;</label> 
@@ -227,7 +227,7 @@
 			</div>
 			<div class="col-4 d-grid">
 				<label for="" class="form-label">&nbsp;</label>
-				<button type="button" class="btn btn-dark" onclick="execDaumPostcode();">우편번호</button>
+				<button type="button" class="btn btn-outline-primary" onclick="execDaumPostcode();">우편번호</button>
 			</div>
 			<div class="col-12">
 				<input type="text" class="form-control" id="inputAddress" value="${fn:split(member.memAddr, '/')[1]}" placeholder="상세주소" autocomplete="none" name="memAddr" required>
@@ -268,7 +268,7 @@
 				<a href="javascript:void(0);" class="dellink" style="display: none;">썸네일삭제</a>
 			</div>
 			<div class="col-12 text-center">
-				<button type="submit" class="btn btn-dark w-25">회원수정</button>
+				<button type="submit" class="btn btn-primary w-25">회원수정</button>
 			</div>
 		</form>
 	<!-- 외부 script -->
@@ -288,7 +288,7 @@
 	        <input type="text" class="form-control" id="checkCode">
 	      </div>
 	      <div class="modal-footer">
-	        <button type="button" class="btn btn-dark" onclick="fnCheckCode();">확인</button>
+	        <button type="button" class="btn btn-primary" onclick="fnCheckCode();">확인</button>
 	      </div>
 	    </div>
 	  </div>

@@ -449,7 +449,7 @@
 	<update id="deleteBoardOne">
 		UPDATE BOARD
 		SET IS_DELETE = 'Y'
-			, UPDATE_DATE = SYSDATE
+			, UPDATE_DATE = CURRENT_DATE
 		WHERE BOARD_NO = #{boardNo}
 	</update>
 	
@@ -458,7 +458,7 @@
 		UPDATE BOARD
 		SET BOARD_TITLE = #{boardTitle}
 			, BOARD_CONTENT = #{boardContent}
-			, UPDATE_DATE = SYSDATE
+			, UPDATE_DATE = CURRENT_DATE
 			, CATE_NO = #{cateNo}
 			, FILE_CNT = #{fileCnt}
 			<choose>
@@ -533,7 +533,7 @@
 	<update id="updateReply">
 		UPDATE REPLY
 		SET REPLY_CONTENT = #{replyContent}
-			, UPDATE_DATE = SYSDATE
+			, UPDATE_DATE = CURRENT_DATE
 			<if test="isSecret != null and isSecret != ''"> <!-- 비밀 댓글 구분 -->
 				, IS_SECRET = #{isSecret}
 			</if>
@@ -544,7 +544,7 @@
 	<update id="deleteReply" parameterType="String">
 		UPDATE REPLY
 		SET IS_DELETE = 'Y'
-			, UPDATE_DATE = SYSDATE
+			, UPDATE_DATE = CURRENT_DATE
 		WHERE REPLY_NO = #{replyNo}
 	</update>
 	

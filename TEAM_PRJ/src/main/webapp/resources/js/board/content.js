@@ -48,16 +48,20 @@ function commentList(){
             $.each(data, function(key, value){ 
                 a += '<div class="commentArea_'+value.replyNo+'" style="border-bottom:1px solid darkgray; margin: 10px 0;">';
                 if (value.isSecret == 'Y' && value.replyWriter != $('#loginId').val() && value.replyWriter != $('#boardWriter').val() && $('#loginType').val() != 'admin') { // 비밀 댓글인 경우
-					a += '<div class="d-inline-block col-8 commentContent_'+value.replyNo+'"> <p style="padding-left: 5px; margin-bottom: 5px;">' + 
+					a += '<div class="d-inline-block col-7 commentContent_'+value.replyNo+'"> <p style="padding-left: 5px; margin-bottom: 5px; word-wrap:break-word;">' + 
 					'<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock" viewBox="0 0 16 16"><path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/></svg> 해당 댓글은 작성자와 관리자만 확인 가능합니다.' 
 					+ '</p></div>';
 				} else { // 비밀 댓글이 아닌 경우
-					a += '<div class="d-inline-block col-8 commentContent_'+value.replyNo+'"> <p style="padding-left: 5px; margin-bottom: 5px;">'+value.replyContent +'</p></div>';
+					a += '<div class="d-inline-block col-7 commentContent_'+value.replyNo+'"> <p style="padding-left: 5px; margin-bottom: 5px; word-wrap:break-word;">';
+					if (value.isSecret == 'Y') {
+						a += '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock" viewBox="0 0 16 16"><path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/></svg> ';
+					}
+					a += value.replyContent + '</p></div>';
 				}
                 if (value.updateDate == null) {
-					a += '<div class="d-inline-block col-4 text-end commentInfo_'+value.replyNo+'">'+ value.memName + ' / ' + value.createDate;
+					a += '<div class="d-inline-block col-5 text-end commentInfo_'+value.replyNo+'">'+ value.memName + ' / ' + value.createDate;
 				} else {
-					a += '<div class="d-inline-block col-4 text-end commentInfo_'+value.replyNo+'">'+ value.memName + ' / ' + value.updateDate;
+					a += '<div class="d-inline-block col-5 text-end commentInfo_'+value.replyNo+'">'+ value.memName + ' / ' + value.updateDate;
 				}
                 if (value.replyWriter == $('#loginId').val() || $('#loginType').val() == 'admin') {
 					a += '<a href="javascript:void(0);" class="link-primary text-decoration-none" onclick="commentUpdate(\''+value.replyNo+'\',\''+value.replyContent+'\',\''+value.isSecret+'\'); return false;"> 수정 </a>';
@@ -90,11 +94,13 @@ function commentUpdate(cno, content, secret){
     var a ='';
     
     a += '<div class="input-group">';
+    a += '<div class="form-check form-switch pt-1"><input class="form-check-input" type="checkbox" role="switch" name="isSecret_' + cno + '" id="isSecret_' + cno + '" value="Y"';
     if (secret == 'Y') {
-	  	a += '<div class="form-check form-switch pt-1"><input class="form-check-input" type="checkbox" role="switch" name="isSecret_' + cno + '" id="isSecret_' + cno + '" value="Y" checked><label class="form-check-label me-2" for="isSecret_' + cno + '">비밀댓글</label></div>';
+	  	a += 'checked>';
 	} else {
-		a += '<div class="form-check form-switch pt-1"><input class="form-check-input" type="checkbox" role="switch" name="isSecret_' + cno + '" id="isSecret_' + cno + '" value="Y"><label class="form-check-label me-2" for="isSecret_' + cno + '">비밀댓글</label></div>';
+		a += '>';
 	}
+    a += '<label class="form-check-label me-2" for="isSecret_' + cno + '">비밀댓글</label></div>';
     a += '<input type="text" class="form-control border me-1" name="content_'+cno+'" value="'+content+'"/>';
     a += '<span class="input-group-btn"><button class="btn btn-white" type="button" onclick="commentUpdateProc(\''+cno+'\');">수정</button> </span>';
     a += '</div>';

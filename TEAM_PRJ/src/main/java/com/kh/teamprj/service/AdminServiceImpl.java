@@ -1,6 +1,5 @@
 package com.kh.teamprj.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.mybatis.spring.SqlSessionTemplate;
@@ -115,11 +114,6 @@ public class AdminServiceImpl implements AdminService {
 	@Override //가장 큰 APP_NO + 1 조회
 	public String selectNextAppNo() {
 		return sqlSession.selectOne("adminMapper.selectNextAppNo");
-	}
-
-	@Override //다중승인
-	public void multiApproveAcademicApp(ArrayList<String> appNoList) {
-		sqlSession.update("multiApproveAcademicApp", appNoList);
 	}
 
 	

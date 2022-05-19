@@ -51,7 +51,7 @@
 	        </ul>
 	    </div>
 	</div>
-	<div class="row mt-3">
+	<div class="row mt-3 mb-3">
 		<div class="col-6">
 			<div class="col-12 mb-1 pb-1 border-bottom" id="cateDiv">
 			</div>

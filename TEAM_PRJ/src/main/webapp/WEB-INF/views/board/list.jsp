@@ -78,6 +78,11 @@
 								<c:otherwise>
 									<td scope="row" class="text-start">
 										<a class="text-reset text-decoration-none" href="/board/boardContent?boardNo=${board.boardNo}">
+										<c:if test="${board.isSecret eq 'Y'}">
+											<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock" viewBox="0 0 16 16">
+											  <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/>
+											</svg>
+										</c:if>
 											${board.boardTitle} (${board.replyCnt})
 										<c:if test="${board.fileCnt ne '0'}">
 											<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-folder-plus" viewBox="0 0 16 16">
@@ -133,7 +138,7 @@
 			   		<input type="checkbox" class="form-check-input" id="isSecret" name="isSecret" value="N" <c:if test="${boardPage.isSecret eq 'N'}">checked</c:if>>
 			   		<label class="form-check-label" for="isSecret">비밀글제외</label>
 		   		</div>
-		   		<div class="form-check form-check-inline m-0 p-0 col-2">
+		   		<div class="form-check form-check-inline m-0 p-0 col-2 me-1">
 			   		<select class="form-select" aria-label="Default select example" name="searchType" id="searchType">
 					  <option value="title&content" <c:if test="${not empty boardPage.boardTitle and not empty boardPage.boardContent}">selected</c:if>>제목 + 내용</option>
 					  <option value="title" <c:if test="${not empty boardPage.boardTitle and empty boardPage.boardContent}">selected</c:if>>제목</option>
@@ -143,7 +148,7 @@
 					  <option value="replyWriter" <c:if test="${not empty boardPage.reply and not empty boardPage.reply.replyWriter}">selected</c:if>>댓글작성자</option>
 					</select>
 				</div>
-				<div class="form-check form-check-inline m-0 p-0 col-7">
+				<div class="form-check form-check-inline m-0 p-0 col-7 me-1">
 		      		<input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="searchInput" id="searchInput" 
 		      		<c:choose>
 		      			<c:when test="${empty boardPage.reply}">

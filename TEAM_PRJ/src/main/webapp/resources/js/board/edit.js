@@ -26,7 +26,7 @@ $(document).ready(function() {
 })
 
 function addFile() {
-	var str = "<div class='file-group'><input class='form-control d-inline-block w-75 me-2' type='file' name='files'><a href='#this' name='file-delete'>삭제</a></div>";
+	var str = "<div class='file-group'><input class='form-control d-inline-block w-94 me-2' type='file' name='files'><a href='#this' class='link-danger text-decoration-none' name='file-delete'>삭제</a></div>";
 	$("#file-list").append(str);
 	$("a[name='file-delete']").on("click", function(e) {
 		e.preventDefault();

@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -11,6 +12,14 @@
 <c:if test="${not empty board}">
 	<title>게시판 글수정 화면</title>
 </c:if>
+<style type="text/css">
+.w-94 {
+	width: 94% !important;
+}
+.link-danger {
+	color: #dc3545 !important;
+}
+</style>
 </head>
 <body>
 	<div class="w-50 mx-auto">
@@ -30,24 +39,26 @@
 			<div class="form-group mb-2">
 				<textarea class="form-control" rows="10" name="boardContent" placeholder="내용을 입력해주세요" required></textarea>
 			</div>
-			<div class="form-group" id="file-list">
-		        <a href="#this" onclick="addFile();">파일추가</a>
-		        <div class="file-group">
-		            <input class="form-control d-inline-block w-75 me-2" type="file" name="files"><a href='#this' name='file-delete'>삭제</a>
+			<div class="form-group row" id="file-list">
+				<div class="col-7 ps-2 mb-2">
+		        	<a href="#this" class="text-decoration-none p-2" onclick="addFile();">파일추가</a>
+		        </div>
+		        <div class="col-5 text-end">
+		        	<div class="form-check form-switch d-inline-block me-3">
+					  <input class="form-check-input" type="checkbox" role="switch" onchange="changeNotice(this);" id="isNotice" name="isNotice" value="Y">
+					  <label class="form-check-label" for="isNotice">공지사항</label>
+					</div>
+					<div class="form-check form-switch d-inline-block">
+					  <input class="form-check-input" type="checkbox" role="switch" id="isSecret" name="isSecret" value="Y">
+					  <label class="form-check-label" for="isSecret">비밀글</label>
+					</div>
+		        </div>
+		        <div class="col-12 file-group">
+		            <input class="form-control d-inline-block w-94 me-2" type="file" name="files"><a href='#this' class="link-danger text-decoration-none" name='file-delete'>삭제</a>
 		        </div>
 		    </div>
-			<div class="col-12 mb-2">
-				<div class="form-check form-switch">
-				  <input class="form-check-input" type="checkbox" role="switch" onchange="changeNotice(this);" id="isNotice" name="isNotice" value="Y">
-				  <label class="form-check-label" for="isNotice">공지사항</label>
-				</div>
-				<div class="form-check form-switch">
-				  <input class="form-check-input" type="checkbox" role="switch" id="isSecret" name="isSecret" value="Y">
-				  <label class="form-check-label" for="isSecret">비밀글</label>
-				</div>
-			</div>
-			<div class="col-12 text-center mb-4">
-				<button type="submit" class="btn btn-secondary mb-3" id="writeForm">글쓰기</button>
+			<div class="col-12 text-center mb-4 mt-4">
+				<button type="submit" class="btn btn-primary mb-3">글쓰기</button>
 			</div>
 		</form>
 	<script type="text/javascript" src="/resources/js/board/write.js"></script>
@@ -64,28 +75,39 @@
 			<div class="form-group mb-2">
 				<textarea class="form-control" rows="10" name="boardContent" placeholder="내용을 입력해주세요" required>${board.boardContent}</textarea>
 			</div>
-			<div class="form-group" id="file-list">
-		        <a href="#this" onclick="addFile();">파일추가</a>
-		         <c:forEach items="${board.fileInfos}" var="file">
-		            <div class="file-input">
-		                <span class="glyphicon glyphicon-camera" aria-hidden="true">${file.originFile}</span>
-		                <input type="hidden" name="fileList" value="${file.fileNo}">
-		                <a href='#this' name='file-delete'>삭제</a>
-		            </div>
-		        </c:forEach>
+			
+			<div class="form-group row" id="file-list">
+				<div class="col-7 ps-2">
+		        	<a href="#this" class="text-decoration-none d-inline-block ms-2 mb-2" onclick="addFile();">파일추가</a>
+					<c:forEach items="${board.fileInfos}" var="file">
+						<div class="file-input mb-1">
+							<c:set var="fileType" value="${fn:split(file.saveFile, '.')[1]}" />
+		                    <c:if test="${fileType eq 'jpg' or fileType eq 'jpeg' or fileType eq 'png'}">
+		                    	<img alt="${file.originFile}" src="/resources/upload/${file.saveFolder}/${file.saveFile}" width="100">
+		                    </c:if>
+		                    <c:if test="${fileType ne 'jpg' and fileType ne 'jpeg' and fileType ne 'png'}">
+		                    	<img alt="${file.originFile}" src="/resources/images/no_image.jpg" width="100">
+		                    </c:if>
+	                    	<span class="ms-1">${file.originFile}</span>
+						   <%--  <span class="glyphicon glyphicon-camera" aria-hidden="true">${file.originFile}</span> --%>
+							<input type="hidden" name="fileList" value="${file.fileNo}">
+						    <a href='#this' class="link-danger text-decoration-none" name="file-delete">삭제</a>
+						</div>
+					</c:forEach>
+      			</div>
+    			<div class="col-5 text-end">
+    				<div class="form-check form-switch d-inline-block me-3">
+					  <input class="form-check-input" type="checkbox" role="switch" id="isNotice" name="isNotice" value="Y" <c:if test="${board.isNotice eq 'Y'}">checked</c:if>>
+					  <label class="form-check-label" for="isNotice">공지사항</label>
+					</div>
+					<div class="form-check form-switch d-inline-block">
+					  <input class="form-check-input" type="checkbox" role="switch" id="isSecret" name="isSecret" value="Y" <c:if test="${board.isSecret eq 'Y'}">checked</c:if>>
+					  <label class="form-check-label" for="isSecret">비밀글</label>
+					</div>
+    			</div>
 		    </div>
-			<div class="col-12 mb-2">
-				<div class="form-check form-switch">
-				  <input class="form-check-input" type="checkbox" role="switch" id="isNotice" name="isNotice" value="Y" <c:if test="${board.isNotice eq 'Y'}">checked</c:if>>
-				  <label class="form-check-label" for="isNotice">공지사항</label>
-				</div>
-				<div class="form-check form-switch">
-				  <input class="form-check-input" type="checkbox" role="switch" id="isSecret" name="isSecret" value="Y" <c:if test="${board.isSecret eq 'Y'}">checked</c:if>>
-				  <label class="form-check-label" for="isSecret">비밀글</label>
-				</div>
-			</div>
-			<div class="col-12 text-center mb-4">
-				<button type="submit" class="btn btn-secondary mb-3">글수정</button>
+			<div class="col-12 text-center mb-4 mt-2">
+				<button type="submit" class="btn btn-primary mb-3">글수정</button>
 			</div>
 		</form>
 	<script type="text/javascript" src="/resources/js/board/edit.js"></script>

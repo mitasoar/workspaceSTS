@@ -26,19 +26,17 @@
 			<table class="table">
 				<thead>
 					<tr>
-						<th scope="col"><input type="checkbox" class="form-check-input" name="chkAll" onclick="selectAll(this);"></th>
-						<th scope="col">#</th>
-						<th scope="col">아이디</th>
-						<th scope="col">이름</th>
-						<th scope="col">직책</th>
-						<th scope="col">가입여부</th>
+						<th scope="col" class="col-1"><input type="checkbox" class="form-check-input" name="chkAll" onclick="selectAll(this);"></th>
+						<th scope="col" class="col-4">아이디</th>
+						<th scope="col" class="col-3">이름</th>
+						<th scope="col" class="col-2">직책</th>
+						<th scope="col" class="col-2">가입여부</th>
 					</tr>
 				</thead>
 				<tbody>
 					<c:forEach items="${memList}" var="member">
 						<tr>
-							<td><input type="checkbox" class="form-check-input" name="chkUser" value="${member.memNo}" onclick="unCheck(this);"></td>
-							<td scope="row" role="button" data-bs-toggle="modal" data-bs-target="#memberDetailModal" onclick="selectMemberDetail('${member.memNo}');">${member.RN}</td>
+							<td scope="row"><input type="checkbox" class="form-check-input" name="chkUser" value="${member.memNo}" onclick="unCheck(this);"></td>
 							<td role="button" data-bs-toggle="modal" data-bs-target="#memberDetailModal" onclick="selectMemberDetail('${member.memNo}');">${member.memNo}</td>
 							<td role="button" data-bs-toggle="modal" data-bs-target="#memberDetailModal" onclick="selectMemberDetail('${member.memNo}');">${member.memName}</td>
 							<td role="button" data-bs-toggle="modal" data-bs-target="#memberDetailModal" onclick="selectMemberDetail('${member.memNo}');">${member.memType}</td>
@@ -74,14 +72,14 @@
 			<nav class="navbar navbar-light">
 			  <div class="col-12">
 			    <form class="d-flex pe-4 me-5" id="searchForm" action="#" onsubmit="return searchMember();">
-			    	<div class="form-check form-check-inline col-3 m-0 p-0">
+			    	<div class="form-check form-check-inline col-3 m-0 p-0 me-1">
 				   		<select class="form-select" aria-label="Default select example" name="isJoin" id="isJoin">
 						  <option value="">전체회원</option>
 						  <option value="Y" <c:if test="${memPage.isJoin eq 'Y'}">selected</c:if>>가입회원만</option>
 						  <option value="N" <c:if test="${memPage.isJoin eq 'N'}">selected</c:if>>탈퇴회원만</option>
 						</select>
 			   		</div>
-			   		<div class="form-check form-check-inline m-0 p-0 col-2">
+			   		<div class="form-check form-check-inline col-2 m-0 p-0 me-1">
 				   		<select class="form-select" aria-label="Default select example" name="searchMemType" id="searchMemType">
 						  <option value="">직책</option>
 						  <option value="stu" <c:if test="${memPage.memType eq 'stu'}">selected</c:if>>학생</option>
@@ -90,14 +88,14 @@
 						  <option value="admin" <c:if test="${memPage.memType eq 'admin'}">selected</c:if>>관리자</option>
 						</select>
 					</div>
-			   		<div class="form-check form-check-inline m-0 p-0 col-2">
+			   		<div class="form-check form-check-inline m-0 p-0 col-2 me-1">
 				   		<select class="form-select" aria-label="Default select example" name="searchGender" id="searchGender">
 						  <option value="">성별</option>
 						  <option value="male" <c:if test="${memPage.memGender eq 'male'}">selected</c:if>>남자</option>
 						  <option value="female" <c:if test="${memPage.memGender eq 'female'}">selected</c:if>>여자</option>
 						</select>
 					</div>
-			   		<div class="form-check form-check-inline m-0 p-0 col-2">
+			   		<div class="form-check form-check-inline m-0 p-0 col-2 me-1">
 				   		<select class="form-select" aria-label="Default select example" name="searchType" id="searchType">
 						  <option value="name" <c:if test="${not empty memPage.memName}">selected</c:if>>이름</option>
 						  <option value="email" <c:if test="${not empty memPage.memEmail}">selected</c:if>>메일</option>
@@ -105,7 +103,7 @@
 						  <option value="phone" <c:if test="${not empty memPage.memPhone}">selected</c:if>>연락처</option>
 						</select>
 					</div>
-					<div class="form-check form-check-inline m-0 p-0 col-4">
+					<div class="form-check form-check-inline m-0 p-0 col-4 me-1">
 			      		<input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="searchInput" id="searchInput" 
 	      				<c:if test="${not empty memPage.memName}">
       						value="${memPage.memName}"
@@ -141,21 +139,21 @@
 	      	<table class="table text-center">
 	      		<tbody>
 	      			<tr>
-	      				<td colspan="4" rowspan="4" id="memImage">사진데이터</td>
+	      				<td colspan="4" rowspan="4" id="memImage"></td>
 	      				<td class="fw-bold" scope="col" colspan="3">아이디</td>
 	      				<td class="fw-bold" scope="col" colspan="1">직책</td>
 	      			</tr>
 	      			<tr>
-	      				<td colspan="3" id="memNo">아이디데이터</td>
-	      				<td colspan="1" id="memType">직책데이터</td>
+	      				<td colspan="3" id="memNo"></td>
+	      				<td colspan="1" id="memType"></td>
 	      			</tr>
 	      			<tr>
 	      				<td class="fw-bold" scope="col" colspan="3">이름</td>
 	      				<td class="fw-bold" scope="col" colspan="1">성별</td>
 	      			</tr>
 	      			<tr>
-	      				<td colspan="3" id="memName">이름데이터</td>
-	      				<td colspan="1" id="memGender">성별데이터</td>
+	      				<td colspan="3" id="memName"></td>
+	      				<td colspan="1" id="memGender"></td>
 	      			</tr>
 	      			<tr>
 	      				<td class="fw-bold" scope="col" colspan="4">이메일</td>
@@ -163,23 +161,23 @@
 	      				<td class="fw-bold" scope="col" colspan="2">생일</td>
 	      			</tr>
 	      			<tr>
-	      				<td colspan="4" id="memEmail">이메일데이터</td>
-	      				<td colspan="2" id="memPhone">연락처데이터</td>
-	      				<td colspan="2" id="memBirth">생일데이터</td>
+	      				<td colspan="4" id="memEmail"></td>
+	      				<td colspan="2" id="memPhone"></td>
+	      				<td colspan="2" id="memBirth"></td>
 	      			</tr>
 	      			<tr>
 	      				<td class="fw-bold" scope="col" colspan="8">주소</td>
 	      			</tr>
 	      			<tr>
-	      				<td colspan="8" id="memAddr">주소데이터</td>
+	      				<td colspan="8" id="memAddr"></td>
 	      			</tr>
 	      			<tr>
 	      				<td class="fw-bold" scope="col" colspan="4">가입날짜</td>
 	      				<td class="fw-bold" scope="col" colspan="4">탈퇴날짜</td>
 	      			</tr>
 	      			<tr>
-	      				<td colspan="4" id="createDate">가입날짜데이터</td>
-	      				<td colspan="4" id="withdrawDate">탈퇴날짜데이터</td>
+	      				<td colspan="4" id="createDate"></td>
+	      				<td colspan="4" id="withdrawDate"></td>
 	      			</tr>
 	      		</tbody>
 	      	</table>
