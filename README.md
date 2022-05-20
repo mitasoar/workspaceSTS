@@ -17,6 +17,9 @@
     - [프로젝트 목표](#프로젝트-목표)
     - [프로젝트 아이디어](#프로젝트-아이디어)
     - [프로젝트 개발환경](#프로젝트-개발환경)
+- [기능 구현](#기능-구현)
+    - [개발 진행방향](#개발-진행방향)
+    - [테이블 설계](#테이블-설계)
 - [기능 목록](#기능-목록)
     - [기능 예시](#기능-예시)
 
@@ -26,7 +29,7 @@
 
 ### 프로젝트 팀원
 
-- 우미타, 배도훈, 이강국
+- 우미타 / 배도훈 / 이강국
 
 ### 프로젝트 목표
 
@@ -37,7 +40,7 @@
 
 - 어떤 홈페이지를 만들어볼까 하는 고민중에, 기본적인 기능을 다양하게 구현할 수 있는 '대학교 학사 홈페이지'로 결정하였습니다.
 
-### 프로젝트 개발도구
+### 프로젝트 개발환경
 
 - Programming Language : ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=java&logoColor=white) ![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
 - Web Framework : ![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white) / Spring Security
@@ -47,7 +50,7 @@
 - DataBase : ![Oracle](https://img.shields.io/badge/Oracle-F80000?style=for-the-badge&logo=oracle&logoColor=white)
 - DataBase Cloud : Oracle Cloud
 - SQL Mapper : MyBatis
-- Web Library : ![jQuery](https://img.shields.io/badge/jquery-%230769AD.svg?style=for-the-badge&logo=jquery&logoColor=white) ![Socket.io](https://img.shields.io/badge/Socket.io-black?style=for-the-badge&logo=socket.io&badgeColor=010101) Ajax / Tiles / Log4j / JSON
+- Web Library : ![jQuery](https://img.shields.io/badge/jquery-%230769AD.svg?style=for-the-badge&logo=jquery&logoColor=white) ![Socket.io](https://img.shields.io/badge/Socket.io-black?style=for-the-badge&logo=socket.io&badgeColor=010101) / Ajax / Tiles / Log4j / JSON / Nurigo
 - Browser : ![Google Chrome](https://img.shields.io/badge/Google%20Chrome-4285F4?style=for-the-badge&logo=GoogleChrome&logoColor=white)
 - Operating System : ![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
 
