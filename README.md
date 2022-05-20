@@ -18,7 +18,7 @@
     - [프로젝트 아이디어](#프로젝트-아이디어)
     - [프로젝트 개발환경](#프로젝트-개발환경)
 - [기능 구현](#기능-구현)
-    - [개발 진행방향](#개발-진행방향)
+    - [개발 진행방향](#개발-방법)
     - [테이블 설계](#테이블-설계)
 - [기능 목록](#기능-목록)
     - [기능 예시](#기능-예시)
@@ -51,8 +51,19 @@
 - DataBase Cloud : Oracle Cloud
 - SQL Mapper : MyBatis
 - Web Library : ![jQuery](https://img.shields.io/badge/jquery-%230769AD.svg?style=for-the-badge&logo=jquery&logoColor=white) ![Socket.io](https://img.shields.io/badge/Socket.io-black?style=for-the-badge&logo=socket.io&badgeColor=010101) / Ajax / Tiles / Log4j / JSON / Nurigo
+- Version Control : SVN
 - Browser : ![Google Chrome](https://img.shields.io/badge/Google%20Chrome-4285F4?style=for-the-badge&logo=GoogleChrome&logoColor=white)
-- Operating System : ![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
+- OS : ![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
+- IDE : SpringSTS
+
+---
+
+## 기능 구현
+
+### 개발 방법
+
+- 학사 홈페이지를 이용하는 회원 유형을 생각하여 '학생' / '교수' / '학사팀' / '관리자' 총 4가지의 유형을 분리하고,
+- 홈페이지의 공통된 기능(회원 관련 기능 및 게시판 관련 기능,  
 
 ---
 
