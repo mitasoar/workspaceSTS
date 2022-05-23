@@ -92,4 +92,4 @@
 
 ##### 회원 등록
 
-<img src="https://user-images.githubusercontent.com/49469777/169727708-8e045ba7-fe43-4b0e-9c0d-5704cececb9c.PNG" alt"메인화면" width="250px">
+<img src="https://user-images.githubusercontent.com/49469777/169728232-6d4e2423-6ece-43dc-9a44-d6638b9da42a.PNG" alt"메인화면" width="250px">
