@@ -92,4 +92,4 @@
 
 ##### 회원 등록
 
-<img src="C:\Users\Mita\Pictures\메인화면.PNG" alt"메인화면" width="250px">
+<img src="https://user-images.githubusercontent.com/49469777/169727708-8e045ba7-fe43-4b0e-9c0d-5704cececb9c.PNG" alt"메인화면" width="250px">
