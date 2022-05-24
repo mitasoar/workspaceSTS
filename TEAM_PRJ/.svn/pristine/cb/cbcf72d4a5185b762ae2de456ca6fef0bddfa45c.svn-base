@@ -131,7 +131,7 @@
 		    </c:if>
 		  </ul>
 		</nav>
-		<nav class="navbar navbar-light mb-5">
+		<nav class="navbar navbar-light">
 		  <div class="col-12">
 		    <form class="d-flex ps-5" id="searchForm" action="#" onsubmit="return searchBoard();">
 		    	<div class="form-check form-check-inline col-1 m-0 p-0 pt-2 me-2">
