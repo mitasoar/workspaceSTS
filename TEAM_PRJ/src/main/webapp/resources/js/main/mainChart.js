@@ -1,5 +1,5 @@
 $.ajax({
-	url: '/pro/selectLecNum', //요청경로
+	url: '/chart/selectLecNum', //요청경로
 	type: 'post',
 	data: {},
 	dataType:'json',

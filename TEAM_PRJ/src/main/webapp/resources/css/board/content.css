@@ -1,0 +1,30 @@
+.board-container {
+	height: 300px;
+	margin-bottom: 10px;
+}
+
+.list-container h5, .list-container p {
+	margin-bottom: 0;
+	height: 30px;
+	line-height: normal;
+}
+
+.btn-white:hover {
+	background-color: #EEEEEE;
+}
+
+.link-primary {
+	color: #214099 !important;
+}
+
+.link-success {
+	color: #198754 !important;
+}
+
+.link-danger {
+	color: #dc3545 !important;
+}
+
+.btn-primary {
+	color: #214099 !important;
+}

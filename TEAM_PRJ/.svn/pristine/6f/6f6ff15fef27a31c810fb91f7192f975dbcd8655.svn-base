@@ -1,5 +1,5 @@
 $.ajax({
-	url: '/pro/chartAll',
+	url: '/chart/chartAll',
 	type: 'post',
 	data: {},
 	success: function(result) {

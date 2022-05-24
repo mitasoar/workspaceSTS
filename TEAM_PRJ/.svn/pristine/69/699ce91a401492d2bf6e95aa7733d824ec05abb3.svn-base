@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="memberMapper">
+	<!-- MemberVO -->
+	<resultMap type="com.kh.teamprj.vo.MemberVO" id="member">
+		<id column="MEM_NO" property="memNo"/>
+		<result column="MEM_PW" property="memPw"/>
+		<result column="MEM_NAME" property="memName"/>
+		<result column="MEM_EMAIL" property="memEmail"/>
+		<result column="MEM_ADDR" property="memAddr"/>
+		<result column="MEM_PHONE" property="memPhone"/>
+		<result column="MEM_IMAGE" property="memImage"/>
+		<result column="MEM_GENDER" property="memGender"/>
+		<result column="MEM_BIRTH" property="memBirth"/>
+		<result column="MEM_TYPE" property="memType"/>
+		<result column="IS_JOIN" property="isJoin"/>
+		<result column="CREATE_DATE" property="createDate"/>
+		<result column="WITHDRAW_DATE" property="withdrawDate"/>
+		<result column="STU_NO" property="stuNo"/>
+		<result column="EMP_NO" property="empNo"/>
+	</resultMap>
+	
+	<!-- 회원 조회(검색용) -->
+	<select id="selectMemberList" resultMap="member" parameterType="String">
+		SELECT ROWNUM, A.*
+		FROM (
+			SELECT MEM_NO
+				, MEM_NAME
+				, MEM_TYPE
+				, MEM_GENDER
+				, MEM_IMAGE
+			FROM MEMBER
+			WHERE IS_JOIN = 'Y'
+			<if test="_parameter != null and _parameter != ''">
+			AND UPPER(MEM_NAME) LIKE UPPER('%' ||  #{name} || '%')
+			</if>
+			<if test="_parameter == null or _parameter == ''">
+			AND MEM_NAME IS NULL
+			</if>
+		) A
+		WHERE ROWNUM &lt;= 5
+	</select>
+	
+	<!-- 페이징 처리를 위한 회원 수 조회 -->
+	<select id="countMemberList" resultType="int">
+		SELECT COUNT(*)
+		FROM MEMBER M
+		LEFT OUTER JOIN STUDENT S
+		ON M.MEM_NO = S.MEM_NO
+		LEFT OUTER JOIN EMP E
+		ON M.MEM_NO = E.MEM_NO
+		WHERE 1 = 1
+		<if test="isJoin != null and isJoin != ''">
+			AND M.IS_JOIN = #{isJoin}
+		</if>
+		<if test="memType != null and memType != ''">
+			AND M.MEM_TYPE = #{memType}
+		</if>
+		<if test="empType != null and empType != ''">
+			AND E.EMP_TYPE = #{empType}
+		</if>
+		<if test="memGender != null and memGender != ''">
+			AND UPPER(M.MEM_GENDER) = UPPER(#{memGender})
+		</if>
+		<if test="memName != null and memName != ''">
+			AND UPPER(M.MEM_NAME) LIKE UPPER('%' ||  #{memName} || '%')
+		</if>
+		<if test="memEmail != null and memEmail != ''">
+			AND UPPER(M.MEM_EMAIL) LIKE UPPER('%' ||  #{memEmail} || '%')
+		</if>
+		<if test="memAddr != null and memAddr != ''">
+			AND UPPER(M.MEM_ADDR) LIKE UPPER('%' ||  #{memAddr} || '%')
+		</if>
+		<if test="memPhone != null and memPhone != ''">
+			AND REPLACE(M.MEM_PHONE, '-') LIKE ('%' ||  #{memPhone} || '%')
+		</if>
+		ORDER BY M.CREATE_DATE
+	</select>
+	
+	<!-- 회원 조회(회원 관리) -->
+	<select id="selectMemberListByAdmin" resultMap="member" parameterType="String">
+		SELECT *
+		FROM (
+			SELECT ROWNUM RN, A.*
+			FROM (
+				SELECT M.MEM_NO || DECODE(S.STU_NO, null, '', '(' || S.STU_NO ||')') || DECODE(E.EMP_NO, null, '', '(' || E.EMP_NO ||')') AS MEM_NO
+					, M.MEM_NAME
+					, DECODE(UPPER(M.MEM_TYPE), UPPER('stu'), '학생', UPPER('admin'), '관리자', DECODE(UPPER(E.EMP_TYPE), UPPER('pro'), '교수', '학사팀')) AS MEM_TYPE
+					, M.IS_JOIN
+				FROM MEMBER M
+				LEFT OUTER JOIN STUDENT S
+				ON M.MEM_NO = S.MEM_NO
+				LEFT OUTER JOIN EMP E
+				ON M.MEM_NO = E.MEM_NO
+				WHERE 1 = 1
+				<if test="isJoin != null and isJoin != ''">
+					AND M.IS_JOIN = #{isJoin}
+				</if>
+				<if test="memType != null and memType != ''">
+					AND M.MEM_TYPE = #{memType}
+				</if>
+				<if test="empType != null and empType != ''">
+					AND E.EMP_TYPE = #{empType}
+				</if>
+				<if test="memGender != null and memGender != ''">
+					AND UPPER(M.MEM_GENDER) = UPPER(#{memGender})
+				</if>
+				<if test="memName != null and memName != ''">
+					AND UPPER(M.MEM_NAME) LIKE UPPER('%' ||  #{memName} || '%')
+				</if>
+				<if test="memEmail != null and memEmail != ''">
+					AND UPPER(M.MEM_EMAIL) LIKE UPPER('%' ||  #{memEmail} || '%')
+				</if>
+				<if test="memAddr != null and memAddr != ''">
+					AND UPPER(M.MEM_ADDR) LIKE UPPER('%' ||  #{memAddr} || '%')
+				</if>
+				<if test="memPhone != null and memPhone != ''">
+					AND REPLACE(M.MEM_PHONE, '-') LIKE ('%' ||  #{memPhone} || '%')
+				</if>
+				ORDER BY TO_NUMBER(SUBSTR(M.MEM_NO, 5))
+				) A
+			WHERE ROWNUM &lt;= #{paging.end}
+			)
+		WHERE RN &gt;= #{paging.start}
+	</select>
+	
+	<!-- 로그인 -->
+	<select id="loginMember" resultMap="member" parameterType="String">
+		SELECT M.MEM_NO
+			, M.MEM_PW
+			, M.MEM_NAME
+			, M.MEM_TYPE
+			, S.STU_NO
+			, E.EMP_NO
+		FROM MEMBER M LEFT OUTER JOIN STUDENT S
+		ON M.MEM_NO = S.MEM_NO
+		LEFT OUTER JOIN EMP E
+		ON M.MEM_NO = E.MEM_NO
+		WHERE M.IS_JOIN = 'Y'
+		AND (M.MEM_NO = UPPER(#{memId}) OR S.STU_NO = UPPER(#{memId}) OR E.EMP_NO = UPPER(#{memId}))
+	</select>
+	
+	<!-- 이메일 확인 -->
+	<select id="selectEmailByMember" resultType="map" parameterType="String">
+		SELECT M.MEM_NO
+			, S.STU_NO
+			, E.EMP_NO
+		FROM MEMBER M LEFT OUTER JOIN STUDENT S
+		ON M.MEM_NO = S.MEM_NO
+		LEFT OUTER JOIN EMP E
+		ON M.MEM_NO = E.MEM_NO
+		WHERE M.MEM_EMAIL = #{email}
+	</select>
+	
+	<!-- 연락처 확인 -->
+	<select id="selectPhoneByMember" resultType="map" parameterType="String">
+		SELECT M.MEM_NO
+			, S.STU_NO
+			, E.EMP_NO
+		FROM MEMBER M LEFT OUTER JOIN STUDENT S
+		ON M.MEM_NO = S.MEM_NO
+		LEFT OUTER JOIN EMP E
+		ON M.MEM_NO = E.MEM_NO
+		WHERE M.MEM_PHONE = #{phone}
+	</select>
+	
+	<!-- 회원가입 후 발급되는 아이디 -->
+	<select id="selectJoinMember" resultType="map">
+		SELECT M.MEM_NO
+			, S.STU_NO
+			, E.EMP_NO
+		FROM MEMBER M LEFT OUTER JOIN STUDENT S
+		ON M.MEM_NO = S.MEM_NO
+		LEFT OUTER JOIN EMP E
+		ON M.MEM_NO = E.MEM_NO
+		WHERE M.IS_JOIN = 'Y'
+		AND M.MEM_NO = (SELECT 'MEM_' || MAX(TO_NUMBER(SUBSTR(MEM_NO, 5))) FROM MEMBER)
+	</select>
+	
+	<!-- 회원 정보 -->
+	<select id="selectMemberOne" resultMap="member" parameterType="String">
+		SELECT MEM_NO
+			, MEM_NAME
+			, MEM_EMAIL
+			, MEM_ADDR
+			, MEM_PHONE
+			, MEM_IMAGE
+			, MEM_GENDER
+			, TO_CHAR(MEM_BIRTH, 'YYYY-MM-DD') AS MEM_BIRTH
+			, MEM_TYPE
+		FROM MEMBER
+		WHERE IS_JOIN = 'Y'
+		AND MEM_NO = #{memNo}
+	</select>
+	
+	<!-- 회원 정보(관리자용) -->
+	<select id="selectMemberOneByAdmin" resultMap="member" parameterType="String">
+		SELECT M.MEM_NO || DECODE(S.STU_NO, null, '', '(' || S.STU_NO ||')') || DECODE(E.EMP_NO, null, '', '(' || E.EMP_NO ||')') AS MEM_NO
+			, M.MEM_NAME
+			, M.MEM_EMAIL
+			, M.MEM_ADDR
+			, M.MEM_PHONE
+			, M.MEM_IMAGE
+			, DECODE(LOWER(MEM_GENDER), 'male', '남자', '여자') AS MEM_GENDER
+			, TO_CHAR(MEM_BIRTH, 'YYYY"년 "MM"월 "DD"일"') AS MEM_BIRTH
+			, DECODE(LOWER(M.MEM_TYPE), 'stu', '학생', 'admin', '관리자', DECODE(LOWER(E.EMP_TYPE), 'pro', '교수', 'emp', '학사팀')) AS MEM_TYPE
+			, TO_CHAR(M.CREATE_DATE, 'YYYY"년 "MM"월 "DD"일"') AS CREATE_DATE
+			, TO_CHAR(M.WITHDRAW_DATE, 'YYYY"년 "MM"월 "DD"일"') AS WITHDRAW_DATE
+		FROM MEMBER M
+		LEFT OUTER JOIN STUDENT S
+		ON M.MEM_NO = S.MEM_NO
+		LEFT OUTER JOIN EMP E
+		ON M.MEM_NO = E.MEM_NO
+		WHERE M.MEM_NO = #{memNo}
+	</select>
+	
+	<!-- 회원 비밀번호 -->
+	<select id="selectMemberPw" resultType="String" parameterType="String">
+		SELECT MEM_PW
+		FROM MEMBER
+		WHERE IS_JOIN = 'Y'
+		AND MEM_NO = #{memNo}
+	</select>
+	
+	<!-- 비밀번호 변경 -->
+	<update id="updateMemberPw">
+		UPDATE MEMBER
+		SET MEM_PW = #{memPw}
+		WHERE IS_JOIN = 'Y'
+		AND MEM_NO = #{memNo}
+	</update>
+	
+	<!-- 회원 정보 수정 -->
+	<update id="updateMember">
+		UPDATE MEMBER
+		SET  MEM_EMAIL = #{memEmail}
+			, MEM_ADDR = #{memAddr}
+			, MEM_PHONE = #{memPhone}
+			, MEM_IMAGE = #{memImage}
+			, MEM_GENDER = #{memGender}
+			, MEM_BIRTH = #{memBirth}
+		WHERE IS_JOIN = 'Y'
+		AND MEM_NO = #{memNo}
+	</update>
+	
+	<!-- 회원 탈퇴 처리 -->
+	<update id="updateWithdrawList">
+		UPDATE MEMBER
+		SET IS_JOIN = 'N'
+			, WITHDRAW_DATE = CURRENT_DATE
+		WHERE MEM_NO IN 
+		<foreach collection="array" item="memNo" separator="," open="(" close=")">
+           	'${memNo}'
+       	</foreach>
+	</update>
+	
+	<!-- 회원 재가입 처리 -->
+	<update id="updateRejoinList">
+		UPDATE MEMBER
+		SET IS_JOIN = 'Y'
+			, CREATE_DATE = CURRENT_DATE
+			, WITHDRAW_DATE = null
+		WHERE MEM_NO IN 
+		<foreach collection="array" item="memNo" separator="," open="(" close=")">
+           	'${memNo}'
+       	</foreach>
+	</update>
+	
+	<!-- 회원 가입 -->
+	<insert id="insertMember">
+		INSERT ALL
+		INTO MEMBER (MEM_NO
+					, MEM_PW
+					, MEM_NAME
+					, MEM_EMAIL
+					, MEM_ADDR
+					, MEM_PHONE
+					, MEM_IMAGE
+					, MEM_GENDER
+					, MEM_BIRTH
+					, MEM_TYPE)
+		VALUES ((SELECT 'MEM_' || TO_CHAR(NVL(MAX(TO_NUMBER(SUBSTR(MEM_NO, 5))), 0) + 1) FROM MEMBER)
+				, #{memPw}
+				, #{memName}
+				, #{memEmail}
+				, #{memAddr}
+				, #{memPhone}
+				, #{memImage}
+				, #{memGender}
+				, #{memBirth}
+				, #{memType}
+		)
+		<if test="memType.equals('stu')"> <!-- 학생 등록인 경우 -->
+		INTO STUDENT (STU_NO, MEM_NO, COLL_NO, DEPT_NO)
+		VALUES ((SELECT 'STU_' || TO_CHAR(NVL(MAX(TO_NUMBER(SUBSTR(STU_NO, 5))), 0) + 1) FROM STUDENT)
+			, (SELECT 'MEM_' || TO_CHAR(NVL(MAX(TO_NUMBER(SUBSTR(MEM_NO, 5))), 0) + 1) FROM MEMBER)
+			, #{collNo}
+			, #{deptNo})
+		</if>
+		<if test="empType.equals('pro')"> <!-- 직원 등록인 경우 -->
+		INTO EMP (EMP_NO, MEM_NO, COLL_NO, DEPT_NO, EMP_TYPE)
+		VALUES ((SELECT 'EMP_' || TO_CHAR(NVL(MAX(TO_NUMBER(SUBSTR(EMP_NO, 5))), 0) + 1) FROM EMP)
+			, (SELECT 'MEM_' || TO_CHAR(NVL(MAX(TO_NUMBER(SUBSTR(MEM_NO, 5))), 0) + 1) FROM MEMBER)
+			, #{collNo}
+			, #{deptNo}
+			, #{empType})
+		</if>
+		SELECT * FROM SYS.DUAL
+	</insert>
+	
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+

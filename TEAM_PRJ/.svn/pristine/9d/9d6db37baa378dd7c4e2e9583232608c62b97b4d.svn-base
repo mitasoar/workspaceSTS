@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="messageMapper">
+	<!-- MessageVO -->
+	<resultMap type="com.kh.teamprj.vo.MessageVO" id="message">
+		<id column="MSG_NO" property="msgNo" />
+		<result column="ROOM_NO" property="roomNo"/>
+		<result column="FROM_USER" property="fromUser" />
+		<result column="TO_USER" property="toUser" />
+		<result column="SEND_TIME" property="sendTime" />
+		<result column="READ_TIME" property="readTime" />
+		<result column="CONTENT" property="content" />
+		<result column="TO_USER_NAME" property="toUserName"/>
+		<result column="FROM_USER_NAME" property="fromUserName"/>
+	</resultMap>
+	
+	<insert id="sendMessage">
+		INSERT INTO MESSAGE (
+			MSG_NO
+			, ROOM_NO
+			, FROM_USER
+			, TO_USER
+			, CONTENT
+		) VALUES (
+			(SELECT 'MSG_' || TO_CHAR(NVL(MAX(TO_NUMBER(SUBSTR(MSG_NO, 5))), 0) + 1) FROM MESSAGE)
+			<choose>
+				<when test="roomNo != null and roomNo != ''">
+					, #{roomNo}
+				</when>
+				<otherwise>
+					, (SELECT 'ROOM_' || TO_CHAR(NVL(MAX(TO_NUMBER(SUBSTR(ROOM_NO, 6))), 0) + 1) FROM MESSAGE)
+				</otherwise>
+			</choose>
+			, #{fromUser}
+			, #{toUser}
+			, #{content}
+		)
+	</insert>
+	
+	<select id="selectChatMsgList" resultMap="message">
+		SELECT M.MSG_NO
+			, M.ROOM_NO
+			, M.FROM_USER
+			, M.TO_USER
+			, TO_CHAR(M.SEND_TIME, 'YYYY-MM-DD HH24:Mi') AS SEND_TIME
+			, TO_CHAR(M.READ_TIME, 'YYYY-MM-DD HH24:Mi') AS READ_TIME
+			, M.CONTENT
+			, M1.MEM_NAME AS TO_USER_NAME
+    		, M2.MEM_NAME AS FROM_USER_NAME
+		FROM MESSAGE M
+		LEFT OUTER JOIN MEMBER M1
+        ON M.TO_USER = M1.MEM_NO
+        LEFT OUTER JOIN MEMBER M2
+        ON M.FROM_USER = M2.MEM_NO
+		WHERE (TO_USER = #{toUser} AND FROM_USER = #{fromUser}) OR (TO_USER = #{fromUser} AND FROM_USER = #{toUser})
+		ORDER BY TO_NUMBER(SUBSTR(MSG_NO, 5))
+	</select>
+	
+	<select id="selectChatList" resultMap="message" parameterType="String">
+		SELECT M.MSG_NO
+			, M.ROOM_NO
+			, M.FROM_USER
+			, M.TO_USER
+			, TO_CHAR(M.SEND_TIME, 'YYYY-MM-DD HH24:Mi') AS SEND_TIME
+			, TO_CHAR(M.READ_TIME, 'YYYY-MM-DD HH24:Mi') AS READ_TIME
+			, M.CONTENT
+			, M1.MEM_NAME AS TO_USER_NAME
+    		, M2.MEM_NAME AS FROM_USER_NAME
+		FROM MESSAGE M, MEMBER M1, MEMBER M2
+		WHERE MSG_NO IN (
+			SELECT 'MSG_' || MAX(TO_NUMBER(SUBSTR(MSG_NO, 5)))
+			FROM MESSAGE
+			WHERE (TO_USER = #{user} OR FROM_USER = #{user})
+			GROUP BY ROOM_NO
+		)
+		AND M.TO_USER = M1.MEM_NO
+		AND M.FROM_USER = M2.MEM_NO
+		ORDER BY TO_NUMBER(SUBSTR(M.MSG_NO, 5)) DESC
+	</select>
+	
+	<select id="selectRoomNo" resultType="String">
+		SELECT DISTINCT ROOM_NO 
+		FROM MESSAGE 
+		WHERE (TO_USER = #{toUser} AND FROM_USER = #{fromUser}) OR (TO_USER = #{fromUser} AND FROM_USER = #{toUser})
+	</select>
+	
+	<select id="checkMyMessage" resultType="int" parameterType="String">
+		SELECT COUNT(*)
+		FROM MESSAGE
+		WHERE READ_TIME IS NULL AND TO_USER = #{user} AND FROM_USER != #{user}
+	</select>
+	
+	<update id="updateReadMsg">
+		UPDATE (
+			SELECT READ_TIME
+			FROM MESSAGE
+			WHERE TO_USER = #{toUser} AND FROM_USER = #{fromUser}
+		) A
+		SET A.READ_TIME = CURRENT_DATE
+	</update>
+
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
