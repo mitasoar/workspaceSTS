@@ -54,8 +54,6 @@ public class ProfessorController {
 		
 		// 단과대 리스트
 		model.addAttribute("collList", professorService.selectCollege());
-		// 
-		model.addAttribute("collList", professorService.selectCollege());
 		// 학기 정보
 		model.addAttribute("sem", professorService.selectSem(semVO));
 		
